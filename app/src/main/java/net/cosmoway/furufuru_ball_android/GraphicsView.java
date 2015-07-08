@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.os.Vibrator;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -16,8 +17,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private int mCircleVy = 5;
     // 描画用
     private Paint mPaint;
-
-    //Constructor
+    // Vibration
+    private Vibrator mVib;
+    // Constructor
     public GraphicsView(Context context) {
         super(context);
         // SurfaceView描画に用いるコールバックを登録する。
@@ -25,6 +27,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // 描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
+        mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         // スレッド開始
         Thread loop = new Thread(this);
         loop.start();
@@ -65,8 +68,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mCircleX += mCircleVx;
                 mCircleY += mCircleVy;
                 // 画面の領域を超えた？
-                if (mCircleX < 0 || getWidth() < mCircleX) mCircleVx *= -1;
-                if (mCircleY < 0 || getHeight() < mCircleY) mCircleVy *= -1;
+                if (mCircleX < 0 || getWidth() < mCircleX) {
+                    mVib.vibrate(50);
+                    mCircleVx *= -1;
+                }
+                if (mCircleY < 0 || getHeight() < mCircleY) {
+                    mVib.vibrate(50);
+                    mCircleVy *= -1;
+                }
             }
         }
     }
