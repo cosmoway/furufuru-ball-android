@@ -9,9 +9,12 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    // 円の直径
+    private final int INIT_DIAMETER = 40;
+    private int mDiameter = INIT_DIAMETER;
     // 円のX,Y座標
-    private int mCircleX = 0;
-    private int mCircleY = 0;
+    private int mCircleX = INIT_DIAMETER;
+    private int mCircleY = INIT_DIAMETER;
     // 円の移動量
     private int mCircleVx = 5;
     private int mCircleVy = 5;
@@ -19,6 +22,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private Paint mPaint;
     // Vibration
     private Vibrator mVib;
+
     // Constructor
     public GraphicsView(Context context) {
         super(context);
@@ -27,6 +31,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // 描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
+        // Get the system-service of vibrator.
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         // スレッド開始
         Thread loop = new Thread(this);
@@ -62,17 +67,17 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (canvas != null) {
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
-                canvas.drawCircle(mCircleX, mCircleY, 40, mPaint);
+                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
                 mCircleX += mCircleVx;
                 mCircleY += mCircleVy;
                 // 画面の領域を超えた？
-                if (mCircleX < 0 || getWidth() < mCircleX) {
+                if (mCircleX < mDiameter || getWidth() < mCircleX + mDiameter) {
                     mVib.vibrate(50);
                     mCircleVx *= -1;
                 }
-                if (mCircleY < 0 || getHeight() < mCircleY) {
+                if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
                     mVib.vibrate(50);
                     mCircleVy *= -1;
                 }
