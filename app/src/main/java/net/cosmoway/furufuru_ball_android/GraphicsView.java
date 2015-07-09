@@ -66,7 +66,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         List<Sensor> sensors = mManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
         if (sensors.size() > 0) {
             Sensor s = sensors.get(0);
-            mManager.registerListener(this, s, SensorManager.SENSOR_DELAY_UI);
+            mManager.registerListener(this, s, SensorManager.SENSOR_DELAY_GAME);
         }
         // スレッド開始
         mLoop.start();
