@@ -1,3 +1,4 @@
+// 唐突に記述されるコメント！！！
 package net.cosmoway.furufuru_ball_android;
 
 import android.app.Activity;
