@@ -20,6 +20,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private int mCircleVy = 5;
     // 描画用
     private Paint mPaint;
+    // Loop
+    private Thread mLoop;
     // Vibration
     private Vibrator mVib;
 
@@ -33,9 +35,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mPaint.setColor(Color.RED);
         // Get the system-service of vibrator.
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        // スレッド開始
-        Thread loop = new Thread(this);
-        loop.start();
+        mLoop = new Thread(this);
     }
 
     @Override
@@ -51,6 +51,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(canvas);
+        // スレッド開始
+        mLoop.start();
     }
 
     @Override
