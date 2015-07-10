@@ -16,8 +16,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private int mCircleX = INIT_DIAMETER;
     private int mCircleY = INIT_DIAMETER;
     // 円の移動量
-    private int mCircleVx = 5;
-    private int mCircleVy = 5;
+    private int mCircleVx = (int) (Math.random() * 10) + 1;
+    private int mCircleVy = mCircleVx;
     // 描画用
     private Paint mPaint;
     // Loop
@@ -76,12 +76,28 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mCircleY += mCircleVy;
                 // 画面の領域を超えた？
                 if (mCircleX < mDiameter || getWidth() < mCircleX + mDiameter) {
-                    mVib.vibrate(50);
-                    mCircleVx *= -1;
+                    if (Math.abs(mCircleVx) <= 5) {
+                        mVib.vibrate(50);
+                        mCircleVx *= -1;
+                    } else {
+                        if (mCircleX < -mDiameter || getWidth() < mCircleX - mDiameter) {
+                            mCircleVx = 0;
+                            mCircleVy = 0;
+                            break;
+                        }
+                    }
                 }
                 if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
-                    mVib.vibrate(50);
-                    mCircleVy *= -1;
+                    if (Math.abs(mCircleVy) <= 5) {
+                        mVib.vibrate(50);
+                        mCircleVy *= -1;
+                    } else {
+                        if (mCircleY < -mDiameter || getWidth() < mCircleY - mDiameter) {
+                            mCircleVx = 0;
+                            mCircleVy = 0;
+                            break;
+                        }
+                    }
                 }
             }
         }
