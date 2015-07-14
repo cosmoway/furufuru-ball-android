@@ -80,23 +80,25 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mVib.vibrate(50);
                         mCircleVx *= -1;
                     } else {
-                        if (mCircleX < -mDiameter || getWidth() < mCircleX - mDiameter) {
-                            mCircleVx = 0;
-                            mCircleVy = 0;
-                            break;
+                        if (mCircleX < mDiameter) {
+                            mCircleX = getWidth() - mDiameter;
+                            //break;
+                        } else {
+                            mCircleX = mDiameter;
                         }
                     }
                 }
-                if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
-                    if (Math.abs(mCircleVy) <= 5) {
-                        mVib.vibrate(50);
-                        mCircleVy *= -1;
+            }
+            if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
+                if (Math.abs(mCircleVy) <= 5) {
+                    mVib.vibrate(50);
+                    mCircleVy *= -1;
+                } else {
+                    if (mCircleY < mDiameter) {
+                        mCircleY = getHeight() - mDiameter;
                     } else {
-                        if (mCircleY < -mDiameter || getWidth() < mCircleY - mDiameter) {
-                            mCircleVx = 0;
-                            mCircleVy = 0;
-                            break;
-                        }
+                        mCircleY = mDiameter;
+                        //break;
                     }
                 }
             }
