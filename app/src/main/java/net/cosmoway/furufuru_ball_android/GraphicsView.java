@@ -18,7 +18,7 @@ import java.util.List;
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
         , Runnable {
     // 円の直径
-    private final int INIT_DIAMETER = 40;
+    private final int INIT_DIAMETER = 80;
     private int mDiameter = INIT_DIAMETER;
     // 円のX,Y座標
     private float mCircleX = INIT_DIAMETER;
@@ -88,13 +88,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             mAcceleration = event.values.clone();
-            mCircleAx = -mAcceleration[0] / 100;
-            mCircleAy = mAcceleration[1] / 100;
-            mCircleAz = mAcceleration[2] / 100;
+            mCircleAx = -mAcceleration[0] / 10;
+            mCircleAy = mAcceleration[1] / 10;
+            mCircleAz = mAcceleration[2] / 10;
             String str = "Acceleration:"
-                    + "\nX:" + mCircleAx * 100
-                    + "\nY:" + mCircleAy * 100
-                    + "\nZ:" + mCircleAz * 100;
+                    + "\nX:" + mCircleAx * 10
+                    + "\nY:" + mCircleAy * 10
+                    + "\nZ:" + mCircleAz * 10;
             Log.d("Acceleration", str);
         }
     }
@@ -123,14 +123,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 // 画面の領域を超えた？
                 if (mCircleX < mDiameter || getWidth() - mDiameter < mCircleX) {
                     mVib.vibrate(50);
-                    mCircleVx = -mCircleVx;
+                    mCircleVx = -mCircleVx * 0.9;
                     mCircleAx = -mCircleAx;
                     if (mCircleX < mDiameter) mCircleX = mDiameter;
                     else mCircleX = getWidth() - mDiameter;
                 }
                 if (mCircleY < mDiameter || getHeight() - mDiameter < mCircleY) {
                     mVib.vibrate(50);
-                    mCircleVy = -mCircleVy;
+                    mCircleVy = -mCircleVy * 0.9;
                     mCircleAy = -mCircleAy;
                     if (mCircleY < mDiameter) mCircleY = mDiameter;
                     else mCircleY = getHeight() - mDiameter;
