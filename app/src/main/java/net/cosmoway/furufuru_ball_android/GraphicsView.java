@@ -4,11 +4,19 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Vibrator;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+import java.util.List;
+
+public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
+        , Runnable {
     // 円の直径
     private final int INIT_DIAMETER = 40;
     private int mDiameter = INIT_DIAMETER;
@@ -22,6 +30,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private Paint mPaint;
     // Loop
     private Thread mLoop;
+    // SensorManager
+    private SensorManager mManager;
     // Vibration
     private Vibrator mVib;
 
@@ -33,7 +43,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // 描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
-        // Get the system-service of vibrator.
+        // Get the system-service.
+        mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mLoop = new Thread(this);
     }
@@ -51,13 +62,20 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(canvas);
+        // Regist the service of sensor.
+        List<Sensor> sensors = mManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+        if (sensors.size() > 0) {
+            Sensor s = sensors.get(0);
+            mManager.registerListener(this, s, SensorManager.SENSOR_DELAY_GAME);
+        }
         // スレッド開始
         mLoop.start();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        // Listenerの登録解除
+        mManager.unregisterListener(this);
     }
 
     @Override
@@ -85,5 +103,21 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
         }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            String str = "Values:"
+                    + "\nX:" + event.values[SensorManager.DATA_X]
+                    + "\nY:" + event.values[SensorManager.DATA_Y]
+                    + "\nZ:" + event.values[SensorManager.DATA_Z];
+            Log.d("Values",str);
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
