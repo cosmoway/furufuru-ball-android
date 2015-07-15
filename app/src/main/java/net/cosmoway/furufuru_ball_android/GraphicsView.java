@@ -75,26 +75,22 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mCircleX += mCircleVx;
                 mCircleY += mCircleVy;
                 // 画面の領域を超えた？
-                if (mCircleX < mDiameter || getWidth() < mCircleX + mDiameter) {
+                if (mCircleX < mDiameter || mCircleX > getWidth() - mDiameter) {
                     if (Math.abs(mCircleVx) <= 5) {
                         mVib.vibrate(50);
                         mCircleVx *= -1;
                     } else {
-                        if (mCircleX < -mDiameter || getWidth() < mCircleX - mDiameter) {
-                            mCircleVx = 0;
-                            mCircleVy = 0;
+                        if (mCircleX < -mDiameter || mCircleX > getWidth() + mDiameter + mCircleVx) {
                             break;
                         }
                     }
                 }
-                if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
+                if (mCircleY < mDiameter || mCircleY > getHeight() - mDiameter) {
                     if (Math.abs(mCircleVy) <= 5) {
                         mVib.vibrate(50);
                         mCircleVy *= -1;
                     } else {
-                        if (mCircleY < -mDiameter || getWidth() < mCircleY - mDiameter) {
-                            mCircleVx = 0;
-                            mCircleVy = 0;
+                        if (mCircleY < -mDiameter || mCircleY > getHeight() + mDiameter + mCircleVy) {
                             break;
                         }
                     }
