@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
@@ -25,6 +26,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private float mCircleY = INIT_DIAMETER;
     // Acceleraton
     private float[] mAcceleration;
+    private float[] mLinearAcceleration;
     // 円の加速度
     private float mCircleAx = 0.0f;
     private float mCircleAy = 0.0f;
@@ -58,6 +60,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mLoop = new Thread(this);
         // Initializeing of acceleraton.
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
+        mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
     }
 
@@ -75,10 +78,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         canvas.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(canvas);
         // Regist the service of sensor.
-        List<Sensor> sensors = mManager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-        if (sensors.size() > 0) {
-            Sensor s = sensors.get(0);
-            mManager.registerListener(this, s, SENSOR_DELAY);
+        ArrayList<List<Sensor>> sensors = new ArrayList<>();
+        sensors.add(mManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION));
+        sensors.add(mManager.getSensorList(Sensor.TYPE_ACCELEROMETER));
+        for (List<Sensor> sensor : sensors) {
+            if (sensor.size() > 0) {
+                Sensor s = sensor.get(0);
+                mManager.registerListener(this, s, SENSOR_DELAY);
+            }
         }
         // スレッド開始
         mLoop.start();
@@ -88,15 +95,19 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             mAcceleration = event.values.clone();
-            mCircleAx = -mAcceleration[0] / 10;
-            mCircleAy = mAcceleration[1] / 10;
-            mCircleAz = mAcceleration[2] / 10;
-            String str = "Acceleration:"
-                    + "\nX:" + mCircleAx * 10
-                    + "\nY:" + mCircleAy * 10
-                    + "\nZ:" + mCircleAz * 10;
-            Log.d("Acceleration", str);
+        } else if (event.sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+            mLinearAcceleration = event.values.clone();
         }
+
+        mCircleAx = -(mAcceleration[0] / 20 + mLinearAcceleration[0] / 4);
+        mCircleAy = mAcceleration[1] / 20 + mLinearAcceleration[1] / 4;
+        mCircleAz = mAcceleration[2] / 20;
+        String str = "Acceleration:"
+                + "\nX:" + mCircleAx
+                + "\nY:" + mCircleAy
+                + "\nZ:" + mCircleAz;
+        Log.d("Acceleration", str);
+
     }
 
     @Override
