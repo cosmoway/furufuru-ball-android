@@ -24,6 +24,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private Thread mLoop;
     // Vibration
     private Vibrator mVib;
+    private MyWebSocketClient mWebSocketClient;
 
     // Constructor
     public GraphicsView(Context context) {
@@ -35,6 +36,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mPaint.setColor(Color.RED);
         // Get the system-service of vibrator.
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        mWebSocketClient = MyWebSocketClient.newInstance();
         mLoop = new Thread(this);
     }
 
@@ -51,13 +53,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         Canvas canvas = holder.lockCanvas();
         canvas.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(canvas);
+        mWebSocketClient.connect();
         // スレッド開始
         mLoop.start();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        mWebSocketClient.close();
     }
 
     @Override
@@ -66,9 +69,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // これは、Threadクラスのコンストラクタに渡すために用いる。
         while (true) {
             Canvas canvas = getHolder().lockCanvas();
+            String json = null;
             if (canvas != null) {
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
+                // if (受信)
+                if (mWebSocketClient.onMessage())
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
@@ -78,10 +84,17 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 if (mCircleX < mDiameter || getWidth() < mCircleX + mDiameter) {
                     mVib.vibrate(50);
                     mCircleVx *= -1;
+                    json = "{\"move\":\"out\"}";
                 }
                 if (mCircleY < mDiameter || getHeight() < mCircleY + mDiameter) {
                     mVib.vibrate(50);
                     mCircleVy *= -1;
+                    json = "{\"move\":\"out\"}";
+                }
+                if (mWebSocketClient.isOpen() && json != null) {
+                    mWebSocketClient.send(json);
+                } else if (mWebSocketClient.isClosed()) {
+                    mWebSocketClient.connect();
                 }
             }
         }
