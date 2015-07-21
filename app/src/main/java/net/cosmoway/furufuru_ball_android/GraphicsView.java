@@ -8,7 +8,8 @@ import android.os.Vibrator;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable,
+        MyWebSocketClient.MyCallbacks {
     // 円の直径
     private final int INIT_DIAMETER = 40;
     private int mDiameter = INIT_DIAMETER;
@@ -37,6 +38,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // Get the system-service of vibrator.
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mWebSocketClient = MyWebSocketClient.newInstance();
+        mWebSocketClient.setCallbacks(this);
         mLoop = new Thread(this);
     }
 
@@ -74,7 +76,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
                 // if (受信)
-                if (mWebSocketClient.onMessage())
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
@@ -98,5 +99,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
         }
+    }
+
+    @Override
+    public void callbackMethod() {
+        run();
     }
 }

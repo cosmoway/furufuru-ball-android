@@ -12,6 +12,15 @@ public class MyWebSocketClient extends WebSocketClient {
 
     private static final String TAG = "MyWebSocketClient";
 
+    public interface MyCallbacks {
+        public void callbackMethod();
+    }
+    private MyCallbacks mCallbacks;
+
+    public void setCallbacks(MyCallbacks myCallbacks){
+        mCallbacks = myCallbacks;
+    }
+
     public static MyWebSocketClient newInstance() {
         URI uri = null;
         try {
@@ -33,7 +42,8 @@ public class MyWebSocketClient extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        // nop.
+        Log.d(TAG, "Massage: " + message);
+        mCallbacks.callbackMethod();
     }
 
     @Override
