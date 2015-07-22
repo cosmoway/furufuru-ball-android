@@ -12,17 +12,10 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
-
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
-        , Runnable {
-=======
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable,
-        MyWebSocketClient.MyCallbacks {
->>>>>>> #9_No.2103_Drawing_the_ball_on_receiving_message
+        , Runnable, MyWebSocketClient.MyCallbacks {
     // 円の直径
     private final int INIT_DIAMETER = 80;
     private int mDiameter = INIT_DIAMETER;
@@ -139,10 +132,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (canvas != null) {
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
-<<<<<<< HEAD
-=======
-                // if (受信)
->>>>>>> #9_No.2103_Drawing_the_ball_on_receiving_message
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
@@ -161,7 +150,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     } else {
                         if (mCircleX < -(mDiameter * 2) || mCircleX > getWidth() + mDiameter * 2) {
                             json = "{\"move\":\"out\"}";
-                            break;
+                            //break;
                         }
                     }
                 }
@@ -175,14 +164,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     } else {
                         if (mCircleY < -(mDiameter * 2) || mCircleY > getHeight() + mDiameter * 2) {
                             json = "{\"move\":\"out\"}";
-                            break;
+                            //break;
                         }
                     }
-                    if (mWebSocketClient.isOpen() && json != null) {
-                        mWebSocketClient.send(json);
-                    } else if (mWebSocketClient.isClosed()) {
-                        mWebSocketClient.connect();
-                    }
+                }
+                if (mWebSocketClient.isOpen() && json != null) {
+                    mWebSocketClient.send(json);
+                } else if (mWebSocketClient.isClosed()) {
+                    mWebSocketClient.connect();
                 }
             }
         }
