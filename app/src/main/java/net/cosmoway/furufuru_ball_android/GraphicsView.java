@@ -13,11 +13,16 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+<<<<<<< HEAD
 import java.util.ArrayList;
 import java.util.List;
 
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
         , Runnable {
+=======
+public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, Runnable,
+        MyWebSocketClient.MyCallbacks {
+>>>>>>> #9_No.2103_Drawing_the_ball_on_receiving_message
     // 円の直径
     private final int INIT_DIAMETER = 80;
     private int mDiameter = INIT_DIAMETER;
@@ -61,6 +66,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mWebSocketClient = MyWebSocketClient.newInstance();
+        mWebSocketClient.setCallbacks(this);
         mLoop = new Thread(this);
         // Initializeing of acceleraton.
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
@@ -133,6 +139,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (canvas != null) {
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
+<<<<<<< HEAD
+=======
+                // if (受信)
+>>>>>>> #9_No.2103_Drawing_the_ball_on_receiving_message
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
@@ -176,5 +186,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
         }
+    }
+
+    @Override
+    public void callbackMethod() {
+        run();
     }
 }
