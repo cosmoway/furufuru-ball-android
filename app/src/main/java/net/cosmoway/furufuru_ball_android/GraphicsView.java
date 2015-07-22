@@ -45,6 +45,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private final int SENSOR_DELAY;
     // Vibration
     private Vibrator mVib;
+    //
+    private final int SPEED = 50;
 
     // Constructor
     public GraphicsView(Context context) {
@@ -133,18 +135,30 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mCircleY += mCircleVy * SENSOR_DELAY;
                 // 画面の領域を超えた？
                 if (mCircleX < mDiameter || getWidth() - mDiameter < mCircleX) {
-                    mVib.vibrate(50);
-                    mCircleVx = -mCircleVx * 0.9;
-                    mCircleAx = -mCircleAx;
-                    if (mCircleX < mDiameter) mCircleX = mDiameter;
-                    else mCircleX = getWidth() - mDiameter;
+                    if (Math.abs(mCircleVx) <= SPEED) {
+                        mVib.vibrate(50);
+                        mCircleVx = -mCircleVx * 0.9;
+                        mCircleAx = -mCircleAx;
+                        if (mCircleX < mDiameter) mCircleX = mDiameter;
+                        else mCircleX = getWidth() - mDiameter;
+                    } else {
+                        if (mCircleX < -(mDiameter * 2) || mCircleX > getWidth() + mDiameter * 2) {
+                            break;
+                        }
+                    }
                 }
                 if (mCircleY < mDiameter || getHeight() - mDiameter < mCircleY) {
-                    mVib.vibrate(50);
-                    mCircleVy = -mCircleVy * 0.9;
-                    mCircleAy = -mCircleAy;
-                    if (mCircleY < mDiameter) mCircleY = mDiameter;
-                    else mCircleY = getHeight() - mDiameter;
+                    if (Math.abs(mCircleVy) <= SPEED) {
+                        mVib.vibrate(50);
+                        mCircleVy = -mCircleVy * 0.9;
+                        mCircleAy = -mCircleAy;
+                        if (mCircleY < mDiameter) mCircleY = mDiameter;
+                        else mCircleY = getHeight() - mDiameter;
+                    } else {
+                        if (mCircleY < -(mDiameter * 2) || mCircleY > getHeight() + mDiameter * 2) {
+                            break;
+                        }
+                    }
                 }
             }
         }
