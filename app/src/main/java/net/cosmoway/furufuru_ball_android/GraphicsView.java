@@ -53,6 +53,15 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private final int SPEED = 50;
     // Flag
     private boolean is = false;
+    // Timer
+    private long mTime;
+    private long mCTime;
+    private long mSTime;
+    private long mStartTime;
+    private long mStopTime;
+    // Json
+    private String mJson;
+
 
     // Constructor
     public GraphicsView(Context context) {
@@ -75,6 +84,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
+        mTime = 0;
+        mStopTime = 0;
+
     }
 
     @Override
@@ -110,11 +122,15 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
+        mCTime = 0;
+        mSTime = 0;
         mLoop.start();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        mVib = null;
+        mManager = null;
         mWebSocketClient.close();
     }
 
@@ -140,6 +156,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void callbackMethod() {
+        mJson = null;
         if (mCircleX > getWidth() + mDiameter * 3) {
             mCircleX = (float) (getWidth() + mDiameter * 3);
             mCircleVx = -30;
@@ -154,6 +171,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mCircleY = (float) (-mDiameter * 3);
             mCircleVy = 30;
         }
+        mStartTime = System.currentTimeMillis();
         is = true;
     }
 
@@ -161,6 +179,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void run() {
         // Runnableインターフェースをimplementsしているので、runメソッドを実装する
         // これは、Threadクラスのコンストラクタに渡すために用いる。
+
         while (true) {
             try {
                 Thread.sleep(10);
@@ -174,11 +193,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     // 円を描画する
                     canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                     getHolder().unlockCanvasAndPost(canvas);
+                    mCTime = System.currentTimeMillis() - mStartTime;
+                    mTime = mCTime + mSTime;
                     // 円の座標を移動させる
                     mCircleVx += mCircleAx * SENSOR_DELAY;
                     mCircleVy += mCircleAy * SENSOR_DELAY;
                     mCircleX += mCircleVx * SENSOR_DELAY;
                     mCircleY += mCircleVy * SENSOR_DELAY;
+
                     // 画面の領域を超えた？
                     if (mCircleX < mDiameter || getWidth() - mDiameter < mCircleX) {
                         if (Math.abs(mCircleVx) <= SPEED) {
@@ -189,10 +211,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                             else mCircleX = getWidth() - mDiameter;
                         } else {
                             if (mCircleX < -mDiameter * 3 || mCircleX > getWidth() + mDiameter * 3) {
-                                is = false;
+                                moveOut();
                                 sendJson();
-                                mCircleVx = 0;
-                                mCircleVy = 0;
                             }
                         }
                     }
@@ -205,11 +225,22 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                             else mCircleY = getHeight() - mDiameter;
                         } else {
                             if (mCircleY < -mDiameter * 3 || mCircleY > getHeight() + mDiameter * 3) {
+                                moveOut();
                                 sendJson();
-                                is = false;
-                                mCircleVx = 0;
-                                mCircleVy = 0;
                             }
+                        }
+                    }
+                    if (mTime > 10000) {
+                        mPaint.setColor(Color.GRAY);
+                        mManager.unregisterListener(this);
+                        mCircleVx = 0;
+                        mCircleAx = 0;
+                        mCircleAy = 0.49f;
+                        if (mCircleY == getHeight() - mDiameter) {
+                            mCircleVy = 0;
+                            //mJson = "hoge";
+                            //sendJson();
+                            break;
                         }
                     }
                 }
@@ -217,14 +248,22 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
     }
 
+    private void moveOut() {
+        is = false;
+        mCircleVx = 0;
+        mCircleVy = 0;
+        mStopTime = mCTime;
+        mSTime += mStopTime;
+        Log.d("Time", String.valueOf(mSTime));
+        mJson = "{\"move\":\"out\"}";
+    }
+
     private void sendJson() {
-        String json;
-        json = "{\"move\":\"out\"}";
         if (mWebSocketClient.isClosed()) {
             mWebSocketClient.connect();
         }
         if (mWebSocketClient.isOpen()) {
-            mWebSocketClient.send(json);
+            mWebSocketClient.send(mJson);
         }
     }
 }

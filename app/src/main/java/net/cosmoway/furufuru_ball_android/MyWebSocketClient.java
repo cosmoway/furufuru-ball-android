@@ -13,7 +13,7 @@ public class MyWebSocketClient extends WebSocketClient {
     private static final String TAG = "MyWebSocketClient";
 
     public interface MyCallbacks {
-        public void callbackMethod();
+        void callbackMethod();
     }
     private MyCallbacks mCallbacks;
 
