@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.WindowManager;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -23,6 +24,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(new GraphicsView(this));
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         if ("sdk".equals(Build.PRODUCT)) {
@@ -95,5 +97,11 @@ public class MainActivity extends Activity {
                 }
             }, null);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 }
