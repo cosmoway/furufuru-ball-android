@@ -4,6 +4,8 @@ import android.util.Log;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +16,7 @@ public class MyWebSocketClient extends WebSocketClient {
 
     public interface MyCallbacks {
         void moveIn();
+
         void gameOver();
     }
 
@@ -45,10 +48,32 @@ public class MyWebSocketClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         Log.d(TAG, "Massage: " + message);
-        if (message == "{\"move\":\"in\"}") {
-            mCallbacks.moveIn();
-        } else if(message=="{\"game\":\"over\"}"){
-            mCallbacks.gameOver();
+        JSONObject json = null;
+        try {
+            json = new JSONObject(message);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        String str;
+        try {
+            if (json != null) {
+                str = json.getString("move");
+                if (str != null) {
+                    mCallbacks.moveIn();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            if (json != null) {
+                str = json.getString("game");
+                if (str != null) {
+                    mCallbacks.gameOver();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 

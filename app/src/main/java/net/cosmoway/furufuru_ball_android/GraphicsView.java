@@ -23,6 +23,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         , Runnable, MyWebSocketClient.MyCallbacks {
     private Display mDisplay;
     private Point mSize;
+    //Canvas
+    private Canvas mCanvas;
     // 円の半径
     //private final int INIT_DIAMETER = 80;
     private int mDiameter;
@@ -40,6 +42,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private double mCircleVy = 0.0d;
     // 描画用
     private Paint mPaint;
+    private Paint mText;
     // Loop
     private Thread mLoop;
     // SensorManager
@@ -71,6 +74,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // 描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
+        mText = new Paint();
         // Get the system-service.
         WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         mDisplay = window.getDefaultDisplay();
@@ -99,9 +103,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void surfaceCreated(SurfaceHolder holder) {
         // SurfaceView生成時に呼び出されるメソッド。
         // 今はとりあえず背景を青にするだけ。
-        Canvas canvas = holder.lockCanvas();
-        canvas.drawColor(Color.BLUE);
-        holder.unlockCanvasAndPost(canvas);
+        mCanvas = holder.lockCanvas();
+        mCanvas.drawColor(Color.BLUE);
+        holder.unlockCanvasAndPost(mCanvas);
         mWebSocketClient.connect();
         // Regist the service of sensor.
         ArrayList<List<Sensor>> sensors = new ArrayList<>();
@@ -176,7 +180,17 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void gameOver() {
         is = false;
-        System.out.println(mTime);
+        mManager.unregisterListener(this);
+        Log.d("GV", "GameOver");
+        drawOnCanvas();
+        //System.out.println(mTime);
+    }
+
+    private void drawOnCanvas(){
+        mText.setStyle(Paint.Style.FILL);
+        mText.setColor(Color.BLACK);
+        mText.setTextSize(24);
+        mCanvas.drawText("Hoge", 200, 200, mText);
     }
 
     @Override
@@ -191,12 +205,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 e.printStackTrace();
             }
             if (is) {
-                Canvas canvas = getHolder().lockCanvas();
-                if (canvas != null) {
-                    canvas.drawColor(Color.BLUE);
+                mCanvas = getHolder().lockCanvas();
+                if (mCanvas != null) {
+                    mCanvas.drawColor(Color.BLUE);
                     // 円を描画する
-                    canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
-                    getHolder().unlockCanvasAndPost(canvas);
+                    mCanvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
+                    getHolder().unlockCanvasAndPost(mCanvas);
                     mCTime = System.currentTimeMillis() - mStartTime;
                     mTime = mCTime + mSTime;
                     // 円の座標を移動させる
@@ -240,7 +254,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mCircleVx = 0;
                         mCircleAx = 0;
                         mCircleAy = 0.49f;
-                        if (mCircleY == getHeight() - mDiameter) {
+                        if (mCircleY >= getHeight() - mDiameter) {
+                            mCircleY = getHeight() - mDiameter;
                             mCircleVy = 0;
                             mJson = "{\"game\":\"over\"}";
                             sendJson();
