@@ -73,8 +73,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (canvas != null) {
                 canvas.drawColor(Color.BLUE);
                 // 円を描画する
-                // if (受信)
-                if (mWebSocketClient.onMessage())
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                 getHolder().unlockCanvasAndPost(canvas);
                 // 円の座標を移動させる
