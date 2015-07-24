@@ -13,11 +13,13 @@ public class MyWebSocketClient extends WebSocketClient {
     private static final String TAG = "MyWebSocketClient";
 
     public interface MyCallbacks {
-        void callbackMethod();
+        void moveIn();
+        void gameOver();
     }
+
     private MyCallbacks mCallbacks;
 
-    public void setCallbacks(MyCallbacks myCallbacks){
+    public void setCallbacks(MyCallbacks myCallbacks) {
         mCallbacks = myCallbacks;
     }
 
@@ -43,7 +45,11 @@ public class MyWebSocketClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         Log.d(TAG, "Massage: " + message);
-        mCallbacks.callbackMethod();
+        if (message == "{\"move\":\"in\"}") {
+            mCallbacks.moveIn();
+        } else if(message=="{\"game\":\"over\"}"){
+            mCallbacks.gameOver();
+        }
     }
 
     @Override

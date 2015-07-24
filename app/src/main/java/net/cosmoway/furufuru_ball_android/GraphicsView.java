@@ -129,8 +129,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        mVib = null;
-        mManager = null;
+        mManager.unregisterListener(this);
         mWebSocketClient.close();
     }
 
@@ -155,8 +154,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void callbackMethod() {
-        mJson = null;
+    public void moveIn() {
         if (mCircleX > getWidth() + mDiameter * 3) {
             mCircleX = (float) (getWidth() + mDiameter * 3);
             mCircleVx = -30;
@@ -173,6 +171,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         mStartTime = System.currentTimeMillis();
         is = true;
+    }
+
+    @Override
+    public void gameOver() {
+        is = false;
+        System.out.println(mTime);
     }
 
     @Override
@@ -238,8 +242,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mCircleAy = 0.49f;
                         if (mCircleY == getHeight() - mDiameter) {
                             mCircleVy = 0;
-                            //mJson = "hoge";
-                            //sendJson();
+                            mJson = "{\"game\":\"over\"}";
+                            sendJson();
                             break;
                         }
                     }
