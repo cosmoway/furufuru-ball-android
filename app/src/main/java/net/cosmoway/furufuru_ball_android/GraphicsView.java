@@ -1,5 +1,6 @@
 package net.cosmoway.furufuru_ball_android;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -9,6 +10,7 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Display;
@@ -21,10 +23,10 @@ import java.util.List;
 
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
         , Runnable, MyWebSocketClient.MyCallbacks {
-    private Display mDisplay;
-    private Point mSize;
     //Canvas
     private Canvas mCanvas;
+    private int mWidth;
+    private int mHeight;
     // 円の半径
     //private final int INIT_DIAMETER = 80;
     private int mDiameter;
@@ -53,17 +55,19 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private Vibrator mVib;
     private MyWebSocketClient mWebSocketClient;
     // Speed(scalar)
-    private final int SPEED = 50;
+    private final int SPEED = 100;
     // Flag
     private boolean is = false;
     // Timer
     private long mTime;
-    private long mCTime;
+    private long mCurrentTime;
     private long mSTime;
     private long mStartTime;
     private long mStopTime;
     // Json
     private String mJson;
+    // Handler
+    private Handler mHandler;
 
 
     // Constructor
@@ -77,8 +81,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mText = new Paint();
         // Get the system-service.
         WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        mDisplay = window.getDefaultDisplay();
-        mSize = new Point();
+        Display display = window.getDefaultDisplay();
+        Point size = new Point();
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mWebSocketClient = MyWebSocketClient.newInstance();
@@ -90,7 +94,15 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
         mTime = 0;
         mStopTime = 0;
-
+        if (android.os.Build.VERSION.SDK_INT < 14) {
+            mWidth = display.getWidth();
+            mHeight = display.getHeight();
+        } else {
+            display.getSize(size);
+            mWidth = size.x;
+            mHeight = size.y;
+        }
+        mHandler = new Handler();
     }
 
     @Override
@@ -117,18 +129,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mManager.registerListener(this, s, SENSOR_DELAY);
             }
         }
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            mDiameter = mDisplay.getWidth() / 12;
-        } else {
-            mDisplay.getSize(mSize);
-            mDiameter = mSize.x / 12;
-        }
+        mDiameter = mWidth / 10;
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
-        mCTime = 0;
+        mCurrentTime = 0;
         mSTime = 0;
         mLoop.start();
+
     }
 
     @Override
@@ -144,8 +152,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mLinearAcceleration = event.values.clone();
         }
 
-        mCircleAx = -(mAcceleration[0] / 20 + mLinearAcceleration[0] / 4);
-        mCircleAy = mAcceleration[1] / 20 + mLinearAcceleration[1] / 4;
+        mCircleAx = -(mAcceleration[0] / 10 + mLinearAcceleration[0] / 2);
+        mCircleAy = mAcceleration[1] / 10 + mLinearAcceleration[1] / 2;
         String str = "Acceleration:"
                 + "\nX:" + mCircleAx
                 + "\nY:" + mCircleAy;
@@ -159,15 +167,15 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void moveIn() {
-        if (mCircleX > getWidth() + mDiameter * 3) {
-            mCircleX = (float) (getWidth() + mDiameter * 3);
+        if (mCircleX > mWidth + mDiameter * 3) {
+            mCircleX = (float) (mWidth + mDiameter * 3);
             mCircleVx = -30;
         } else if (mCircleX < -mDiameter * 3) {
             mCircleX = (float) (-mDiameter * 2 + mCircleVx);
             mCircleVx = 30;
         }
-        if (mCircleY > getHeight() + mDiameter * 2) {
-            mCircleY = (float) (getHeight() + mDiameter * 3);
+        if (mCircleY > mHeight + mDiameter * 2) {
+            mCircleY = (float) (mHeight + mDiameter * 3);
             mCircleVy = -30;
         } else if (mCircleY < -mDiameter * 3) {
             mCircleY = (float) (-mDiameter * 3);
@@ -179,25 +187,34 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void gameOver() {
-        is = false;
         mManager.unregisterListener(this);
+        is = false;
         Log.d("GV", "GameOver");
-        drawOnCanvas();
-        //System.out.println(mTime);
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
+                // タイトル設定
+                alert.setTitle("ふるふるボール");
+                // ページ作成.(適当に)
+                if (mTime == 0) {
+                    alert.setMessage("Time Over");
+                } else {
+                    alert.setMessage("あなたの記録は" + ((double) mTime / 1000) + "秒でした。");
+                }
+                alert.setPositiveButton("閉じる", null);
+                alert.show();
+            }
+        });
+        mWebSocketClient.close();
     }
 
-    private void drawOnCanvas(){
-        mText.setStyle(Paint.Style.FILL);
-        mText.setColor(Color.BLACK);
-        mText.setTextSize(24);
-        mCanvas.drawText("Hoge", 200, 200, mText);
-    }
 
     @Override
     public void run() {
         // Runnableインターフェースをimplementsしているので、runメソッドを実装する
         // これは、Threadクラスのコンストラクタに渡すために用いる。
-
         while (true) {
             try {
                 Thread.sleep(10);
@@ -211,8 +228,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     // 円を描画する
                     mCanvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
                     getHolder().unlockCanvasAndPost(mCanvas);
-                    mCTime = System.currentTimeMillis() - mStartTime;
-                    mTime = mCTime + mSTime;
+                    mCurrentTime = System.currentTimeMillis() - mStartTime;
+                    mTime = mCurrentTime + mSTime;
                     // 円の座標を移動させる
                     mCircleVx += mCircleAx * SENSOR_DELAY;
                     mCircleVy += mCircleAy * SENSOR_DELAY;
@@ -220,29 +237,29 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     mCircleY += mCircleVy * SENSOR_DELAY;
 
                     // 画面の領域を超えた？
-                    if (mCircleX < mDiameter || getWidth() - mDiameter < mCircleX) {
+                    if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
                         if (Math.abs(mCircleVx) <= SPEED) {
                             mVib.vibrate(Math.abs((long) mCircleVx));
                             mCircleVx = -mCircleVx * 0.9;
                             mCircleAx = -mCircleAx;
                             if (mCircleX < mDiameter) mCircleX = mDiameter;
-                            else mCircleX = getWidth() - mDiameter;
+                            else mCircleX = mWidth - mDiameter;
                         } else {
-                            if (mCircleX < -mDiameter * 3 || mCircleX > getWidth() + mDiameter * 3) {
+                            if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
                                 moveOut();
                                 sendJson();
                             }
                         }
                     }
-                    if (mCircleY < mDiameter || getHeight() - mDiameter < mCircleY) {
+                    if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
                         if (Math.abs(mCircleVy) <= SPEED) {
                             mVib.vibrate(Math.abs((long) mCircleVy));
                             mCircleVy = -mCircleVy * 0.9;
                             mCircleAy = -mCircleAy;
                             if (mCircleY < mDiameter) mCircleY = mDiameter;
-                            else mCircleY = getHeight() - mDiameter;
+                            else mCircleY = mHeight - mDiameter * 3;
                         } else {
-                            if (mCircleY < -mDiameter * 3 || mCircleY > getHeight() + mDiameter * 3) {
+                            if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
                                 moveOut();
                                 sendJson();
                             }
@@ -253,10 +270,11 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mManager.unregisterListener(this);
                         mCircleVx = 0;
                         mCircleAx = 0;
-                        mCircleAy = 0.49f;
-                        if (mCircleY >= getHeight() - mDiameter) {
-                            mCircleY = getHeight() - mDiameter;
+                        mCircleAy = 0.98f;
+                        if (mCircleY == mHeight - mDiameter * 3) {
                             mCircleVy = 0;
+                            mCircleY = mHeight - mDiameter;
+                            mTime = 0;
                             mJson = "{\"game\":\"over\"}";
                             sendJson();
                             break;
@@ -271,7 +289,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         is = false;
         mCircleVx = 0;
         mCircleVy = 0;
-        mStopTime = mCTime;
+        mStopTime = mCurrentTime;
         mSTime += mStopTime;
         Log.d("Time", String.valueOf(mSTime));
         mJson = "{\"move\":\"out\"}";
