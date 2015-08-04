@@ -198,7 +198,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 // タイトル設定
                 alert.setTitle("ふるふるボール");
                 // ページ作成.(適当に)
-                if (mTime == 0) {
+                if (mTime > 10000) {
                     alert.setMessage("Time Over");
                 } else {
                     alert.setMessage("あなたの記録は" + ((double) mTime / 1000) + "秒でした。");
@@ -274,7 +274,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         if (mCircleY == mHeight - mDiameter * 3) {
                             mCircleVy = 0;
                             mCircleY = mHeight - mDiameter;
-                            mTime = 0;
                             mJson = "{\"game\":\"over\"}";
                             sendJson();
                             break;
