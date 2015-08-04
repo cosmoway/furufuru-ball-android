@@ -44,7 +44,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private double mCircleVy = 0.0d;
     // 描画用
     private Paint mPaint;
-    private Paint mText;
     // Loop
     private Thread mLoop;
     // SensorManager
@@ -55,7 +54,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private Vibrator mVib;
     private MyWebSocketClient mWebSocketClient;
     // Speed(scalar)
-    private final int SPEED = 100;
+    private static final int SPEED = 100;
     // Flag
     private boolean is = false;
     // Timer
@@ -78,7 +77,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // 描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.RED);
-        mText = new Paint();
         // Get the system-service.
         WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = window.getDefaultDisplay();
@@ -136,7 +134,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCurrentTime = 0;
         mSTime = 0;
         mLoop.start();
-
     }
 
     @Override
@@ -158,7 +155,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 + "\nX:" + mCircleAx
                 + "\nY:" + mCircleAy;
         Log.d("Acceleration", str);
-
     }
 
     @Override

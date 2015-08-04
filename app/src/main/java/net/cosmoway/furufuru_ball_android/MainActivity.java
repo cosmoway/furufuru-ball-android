@@ -18,8 +18,12 @@ import java.net.URISyntaxException;
 
 public class MainActivity extends Activity {
 
-    private final String TAG = "Ws";
+    private static final String TAG = "Ws";
 
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
