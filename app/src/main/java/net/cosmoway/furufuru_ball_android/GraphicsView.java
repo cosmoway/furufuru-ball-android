@@ -186,8 +186,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mManager.unregisterListener(this);
         is = false;
         Log.d("GV", "GameOver");
-
         mHandler.post(new Runnable() {
+
             @Override
             public void run() {
                 AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
@@ -233,34 +233,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     mCircleY += mCircleVy * SENSOR_DELAY;
 
                     // 画面の領域を超えた？
-                    if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
-                        if (Math.abs(mCircleVx) <= SPEED) {
-                            mVib.vibrate(Math.abs((long) mCircleVx));
-                            mCircleVx = -mCircleVx * 0.9;
-                            mCircleAx = -mCircleAx;
-                            if (mCircleX < mDiameter) mCircleX = mDiameter;
-                            else mCircleX = mWidth - mDiameter;
-                        } else {
-                            if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
-                                moveOut();
-                                sendJson();
-                            }
-                        }
-                    }
-                    if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
-                        if (Math.abs(mCircleVy) <= SPEED) {
-                            mVib.vibrate(Math.abs((long) mCircleVy));
-                            mCircleVy = -mCircleVy * 0.9;
-                            mCircleAy = -mCircleAy;
-                            if (mCircleY < mDiameter) mCircleY = mDiameter;
-                            else mCircleY = mHeight - mDiameter * 3;
-                        } else {
-                            if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
-                                moveOut();
-                                sendJson();
-                            }
-                        }
-                    }
+                    onCollision();
                     if (mTime > 10000) {
                         mPaint.setColor(Color.GRAY);
                         mManager.unregisterListener(this);
@@ -275,6 +248,36 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                             break;
                         }
                     }
+                }
+            }
+        }
+    }
+    private void onCollision() {
+        if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
+            if (Math.abs(mCircleVx) <= SPEED) {
+                mVib.vibrate(Math.abs((long) mCircleVx));
+                mCircleVx = -mCircleVx * 0.9;
+                mCircleAx = -mCircleAx;
+                if (mCircleX < mDiameter) mCircleX = mDiameter;
+                else mCircleX = mWidth - mDiameter;
+            } else {
+                if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
+                    moveOut();
+                    sendJson();
+                }
+            }
+        }
+        if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
+            if (Math.abs(mCircleVy) <= SPEED) {
+                mVib.vibrate(Math.abs((long) mCircleVy));
+                mCircleVy = -mCircleVy * 0.9;
+                mCircleAy = -mCircleAy;
+                if (mCircleY < mDiameter) mCircleY = mDiameter;
+                else mCircleY = mHeight - mDiameter * 3;
+            } else {
+                if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
+                    moveOut();
+                    sendJson();
                 }
             }
         }
