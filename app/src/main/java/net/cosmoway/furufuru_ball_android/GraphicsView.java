@@ -21,8 +21,8 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback, SensorEventListener
-        , Runnable, MyWebSocketClient.MyCallbacks {
+public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
+        SensorEventListener, Runnable, MyWebSocketClient.MyCallbacks {
     //Canvas
     private Canvas mCanvas;
     private int mWidth;
@@ -104,8 +104,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,
-                               int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width,int height) {
 
     }
 
@@ -236,10 +235,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                     onCollision();
                     if (mTime > 10000) {
                         mPaint.setColor(Color.GRAY);
+                        //10秒経過したら灰色となりタイムオーバー
                         mManager.unregisterListener(this);
                         mCircleVx = 0;
                         mCircleAx = 0;
                         mCircleAy = 0.98f;
+                        //重力に任せて下に落ちる
                         if (mCircleY == mHeight - mDiameter * 3) {
                             mCircleVy = 0;
                             mCircleY = mHeight - mDiameter;
@@ -256,12 +257,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
             if (Math.abs(mCircleVx) <= SPEED) {
                 mVib.vibrate(Math.abs((long) mCircleVx));
+                //ぶつかって跳ね返る
                 mCircleVx = -mCircleVx * 0.9;
                 mCircleAx = -mCircleAx;
                 if (mCircleX < mDiameter) mCircleX = mDiameter;
                 else mCircleX = mWidth - mDiameter;
             } else {
                 if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
+                    //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
                     sendJson();
                 }
@@ -269,6 +272,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
             if (Math.abs(mCircleVy) <= SPEED) {
+                //ぶつかって跳ね返る
                 mVib.vibrate(Math.abs((long) mCircleVy));
                 mCircleVy = -mCircleVy * 0.9;
                 mCircleAy = -mCircleAy;
@@ -276,6 +280,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 else mCircleY = mHeight - mDiameter * 3;
             } else {
                 if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
+                    //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
                     sendJson();
                 }
