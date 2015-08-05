@@ -33,7 +33,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     // 円のX,Y座標
     private float mCircleX = mDiameter;
     private float mCircleY = mDiameter;
-    // Acceleraton
+    // Acceleration 加速
     private float[] mAcceleration;
     private float[] mLinearAcceleration;
     // 円の加速度
@@ -42,6 +42,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     // 円の移動量
     private double mCircleVx = 0.0d;
     private double mCircleVy = 0.0d;
+    private static final  double REBOUND=0.9;
     // 描画用
     private Paint mPaint;
     // Loop
@@ -50,7 +51,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private SensorManager mManager;
     // Delay of sensor
     private final int SENSOR_DELAY;
-    // Vibration
+    // Vibration 振動
     private Vibrator mVib;
     private MyWebSocketClient mWebSocketClient;
     // Speed(scalar)
@@ -63,8 +64,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private long mSTime;
     private long mStartTime;
     private long mStopTime;
-    // Json
-    private String mJson;
     // Handler
     private Handler mHandler;
 
@@ -244,8 +243,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         if (mCircleY == mHeight - mDiameter * 3) {
                             mCircleVy = 0;
                             mCircleY = mHeight - mDiameter;
-                            mJson = "{\"game\":\"over\"}";
-                            sendJson();
+                            sendJson("{\"game\":\"over\"}");
                             break;
                         }
                     }
@@ -258,7 +256,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (Math.abs(mCircleVx) <= SPEED) {
                 mVib.vibrate(Math.abs((long) mCircleVx));
                 //ぶつかって跳ね返る
-                mCircleVx = -mCircleVx * 0.9;
+                mCircleVx = -mCircleVx * REBOUND;
                 mCircleAx = -mCircleAx;
                 if (mCircleX < mDiameter) mCircleX = mDiameter;
                 else mCircleX = mWidth - mDiameter;
@@ -266,7 +264,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
                     //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
-                    sendJson();
+                    sendJson("{\"move\":\"out\"}");
                 }
             }
         }
@@ -274,7 +272,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             if (Math.abs(mCircleVy) <= SPEED) {
                 //ぶつかって跳ね返る
                 mVib.vibrate(Math.abs((long) mCircleVy));
-                mCircleVy = -mCircleVy * 0.9;
+                mCircleVy = -mCircleVy * REBOUND;
                 mCircleAy = -mCircleAy;
                 if (mCircleY < mDiameter) mCircleY = mDiameter;
                 else mCircleY = mHeight - mDiameter * 3;
@@ -282,7 +280,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
                     //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
-                    sendJson();
+                    sendJson("{\"move\":\"out\"}");
                 }
             }
         }
@@ -295,15 +293,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStopTime = mCurrentTime;
         mSTime += mStopTime;
         Log.d("Time", String.valueOf(mSTime));
-        mJson = "{\"move\":\"out\"}";
     }
 
-    private void sendJson() {
+    private void sendJson(String json ) {
         if (mWebSocketClient.isClosed()) {
             mWebSocketClient.connect();
         }
         if (mWebSocketClient.isOpen()) {
-            mWebSocketClient.send(mJson);
+            mWebSocketClient.send(json);
         }
     }
 }
