@@ -2,6 +2,7 @@ package net.cosmoway.furufuru_ball_android;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -197,11 +198,27 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 } else {
                     alert.setMessage("あなたの記録は" + ((double) mTime / 1000) + "秒でした。");
                 }
-                alert.setPositiveButton("閉じる", null);
+                alert.setPositiveButton("閉じる", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mWebSocketClient.close();
+
+                    }
+                });
+                alert.setNegativeButton("再開", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mCircleX = -mDiameter * 3;
+                        mCircleY = 0;
+                        sendJson("{\"move\":\"out\"}");
+                    }
+                });
                 alert.show();
             }
         });
-        mWebSocketClient.close();
+       mTime=0;
+        //リセットされる
     }
 
 
