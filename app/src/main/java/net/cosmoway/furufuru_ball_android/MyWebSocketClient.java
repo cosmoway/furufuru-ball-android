@@ -26,6 +26,7 @@ public class MyWebSocketClient extends WebSocketClient {
         mCallbacks = myCallbacks;
     }
 
+
     public static MyWebSocketClient newInstance() {
         URI uri = null;
         try {

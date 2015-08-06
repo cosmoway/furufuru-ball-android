@@ -90,8 +90,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
-        mTime = 0;
-        mStopTime = 0;
         if (android.os.Build.VERSION.SDK_INT < 14) {
             mWidth = display.getWidth();
             mHeight = display.getHeight();
@@ -115,7 +113,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCanvas = holder.lockCanvas();
         mCanvas.drawColor(Color.BLUE);
         holder.unlockCanvasAndPost(mCanvas);
-        mWebSocketClient.connect();
+        mDiameter = mWidth / 10;
         // Regist the service of sensor.
         ArrayList<List<Sensor>> sensors = new ArrayList<>();
         sensors.add(mManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION));
@@ -126,10 +124,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mManager.registerListener(this, s, SENSOR_DELAY);
             }
         }
-        mDiameter = mWidth / 10;
+        mWebSocketClient.connect();
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
+        mTime = 0;
+        mStopTime = 0;
         mCurrentTime = 0;
         mSTime = 0;
         mLoop.start();
@@ -183,6 +183,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void gameOver() {
         mManager.unregisterListener(this);
+        mWebSocketClient.close();
         is = false;
         Log.d("GV", "GameOver");
         mHandler.post(new Runnable() {
@@ -202,22 +203,35 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mWebSocketClient.close();
+
 
                     }
                 });
                 alert.setNegativeButton("再開", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        mWebSocketClient .
                         mCircleX = -mDiameter * 3;
                         mCircleY = 0;
-                        sendJson("{\"move\":\"out\"}");
+                        mCircleVx=30;
+                        mCircleVy=0;
+                        mTime = 0;
+                        mStartTime=0;
+                        mStopTime = 0;
+                        mCurrentTime = 0;
+                        mSTime = 0;
+                        mWebSocketClient.connect();
+                        mPaint.setColor(Color.RED);
+                        mCanvas=null;
+                        is=true;
+                        Log.d("mTime", String.valueOf(mTime));
+                        //sendJson("{\"move\":\"out\"}");
                     }
                 });
                 alert.show();
             }
         });
-       mTime=0;
+
         //リセットされる
     }
 
@@ -258,10 +272,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mCircleAy = 0.98f;
                         //重力に任せて下に落ちる
                         if (mCircleY == mHeight - mDiameter * 3) {
+                            is=false;
                             mCircleVy = 0;
+                            mCircleAy=0;
                             mCircleY = mHeight - mDiameter;
                             sendJson("{\"game\":\"over\"}");
-                            break;
+                            //break;
                         }
                     }
                 }
