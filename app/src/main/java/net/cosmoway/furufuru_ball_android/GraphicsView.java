@@ -1,8 +1,6 @@
 package net.cosmoway.furufuru_ball_android;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -11,7 +9,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.Display;
@@ -43,7 +40,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     // 円の移動量
     private double mCircleVx = 0.0d;
     private double mCircleVy = 0.0d;
-    private static final  double REBOUND=0.9;
+    private static final double REBOUND = 0.9;
     // 描画用
     private Paint mPaint;
     // Loop
@@ -58,16 +55,18 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     // Speed(scalar)
     private static final int SPEED = 100;
     // Flag
-    private boolean is = false;
+    private boolean isMoveIn = false;
     // Timer
-    private long mTime;
+    protected long mTime;
     private long mCurrentTime;
     private long mSTime;
     private long mStartTime;
     private long mStopTime;
-    // Handler
-    private Handler mHandler;
 
+    protected boolean isRunning;
+
+    public static final int INIT_TIME = 21000;
+    protected int mJoin;
 
     // Constructor
     public GraphicsView(Context context) {
@@ -98,11 +97,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mWidth = size.x;
             mHeight = size.y;
         }
-        mHandler = new Handler();
     }
 
     @Override
-    public void surfaceChanged(SurfaceHolder holder, int format, int width,int height) {
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
 
     }
 
@@ -125,6 +123,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
         mWebSocketClient.connect();
+    }
+
+    public void onStart() {
+        sendJson("{\"game\":\"start\"}");
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
@@ -177,62 +179,26 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mCircleVy = 30;
         }
         mStartTime = System.currentTimeMillis();
-        is = true;
+        isMoveIn = true;
+    }
+
+    @Override
+    public void join() {
+
     }
 
     @Override
     public void gameOver() {
         mManager.unregisterListener(this);
         mWebSocketClient.close();
-        is = false;
+        mWebSocketClient.close();
+        isMoveIn = false;
         Log.d("GV", "GameOver");
-        mHandler.post(new Runnable() {
+    }
 
-            @Override
-            public void run() {
-                AlertDialog.Builder alert = new AlertDialog.Builder(getContext());
-                // タイトル設定
-                alert.setTitle("ふるふるボール");
-                // ページ作成.(適当に)
-                if (mTime > 10000) {
-                    alert.setMessage("Time Over");
-                } else {
-                    alert.setMessage("あなたの記録は" + ((double) mTime / 1000) + "秒でした。");
-                }
-                alert.setPositiveButton("閉じる", new DialogInterface.OnClickListener() {
+    @Override
+    public void start() {
 
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-
-                    }
-                });
-                alert.setNegativeButton("再開", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        mWebSocketClient .
-                        mCircleX = -mDiameter * 3;
-                        mCircleY = 0;
-                        mCircleVx=30;
-                        mCircleVy=0;
-                        mTime = 0;
-                        mStartTime=0;
-                        mStopTime = 0;
-                        mCurrentTime = 0;
-                        mSTime = 0;
-                        mWebSocketClient.connect();
-                        mPaint.setColor(Color.RED);
-                        mCanvas=null;
-                        is=true;
-                        Log.d("mTime", String.valueOf(mTime));
-                        //sendJson("{\"move\":\"out\"}");
-                    }
-                });
-                alert.show();
-            }
-        });
-
-        //リセットされる
     }
 
 
@@ -240,13 +206,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void run() {
         // Runnableインターフェースをimplementsしているので、runメソッドを実装する
         // これは、Threadクラスのコンストラクタに渡すために用いる。
-        while (true) {
+        while (isRunning) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            if (is) {
+            if (isMoveIn) {
                 mCanvas = getHolder().lockCanvas();
                 if (mCanvas != null) {
                     mCanvas.drawColor(Color.BLUE);
@@ -263,7 +229,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
                     // 画面の領域を超えた？
                     onCollision();
-                    if (mTime > 10000) {
+                    if (mTime > 10000 || mTime > INIT_TIME - (mJoin + 1)) {
                         mPaint.setColor(Color.GRAY);
                         //10秒経過したら灰色となりタイムオーバー
                         mManager.unregisterListener(this);
@@ -272,9 +238,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mCircleAy = 0.98f;
                         //重力に任せて下に落ちる
                         if (mCircleY == mHeight - mDiameter * 3) {
-                            is=false;
+                            isMoveIn = false;
                             mCircleVy = 0;
-                            mCircleAy=0;
+                            mCircleAy = 0;
                             mCircleY = mHeight - mDiameter;
                             sendJson("{\"game\":\"over\"}");
                             //break;
@@ -284,6 +250,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             }
         }
     }
+
     private void onCollision() {
         if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
             if (Math.abs(mCircleVx) <= SPEED) {
@@ -320,7 +287,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     private void moveOut() {
-        is = false;
+        isMoveIn = false;
         mCircleVx = 0;
         mCircleVy = 0;
         mStopTime = mCurrentTime;
@@ -328,7 +295,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         Log.d("Time", String.valueOf(mSTime));
     }
 
-    private void sendJson(String json ) {
+    private void sendJson(String json) {
         if (mWebSocketClient.isClosed()) {
             mWebSocketClient.connect();
         }

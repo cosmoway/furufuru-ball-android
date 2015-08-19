@@ -17,7 +17,11 @@ public class MyWebSocketClient extends WebSocketClient {
     public interface MyCallbacks {
         void moveIn();
 
+        void join();
+
         void gameOver();
+
+        void start();
     }
 
     private MyCallbacks mCallbacks;
@@ -55,22 +59,42 @@ public class MyWebSocketClient extends WebSocketClient {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
         String str;
         try {
             if (json != null) {
                 str = json.getString("move");
                 if (str != null) {
-                    mCallbacks.moveIn();
+                    if (str.equals("in")) {
+                        mCallbacks.moveIn();
+                    }
                 }
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+
+        try {
+            if (json != null) {
+                str = json.getString("player");
+                if (str != null) {
+                    if (str.equals("change"))
+                        mCallbacks.join();
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         try {
             if (json != null) {
                 str = json.getString("game");
                 if (str != null) {
-                    mCallbacks.gameOver();
+                    if (str.equals("over")) {
+                        mCallbacks.gameOver();
+                    } else if (str.equals("start")) {
+                        mCallbacks.start();
+                    }
                 }
             }
         } catch (JSONException e) {
