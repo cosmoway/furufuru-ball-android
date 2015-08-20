@@ -32,16 +32,18 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_title"
-            android:textColor="@color/bright_foreground_inverse_material_light"
+            android:textColor="@color/material_blue_grey_950"
             android:textSize="48sp" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/text_title2"
-            android:textColor="@color/bright_foreground_inverse_material_light"
-            android:textSize="24sp" />
+        <!--
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/text_title2"
+                    android:textColor="@color/bright_foreground_inverse_material_light"
+                    android:textSize="24sp" />
+        -->
 
         <Button
             android:id="@+id/button_start"
@@ -49,7 +51,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/text_start"
-            android:textColor="@color/bright_foreground_inverse_material_light"
+            android:textColor="@color/material_blue_grey_950"
             android:textSize="28sp" />
     </LinearLayout>
 
@@ -66,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_game_set"
-            android:textColor="@color/bright_foreground_inverse_material_light"
+            android:textColor="@color/material_blue_grey_950"
             android:textSize="48sp" />
 
         <TextView
@@ -74,6 +76,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/text_result"
+            android:textColor="@color/material_blue_grey_950"
             android:textSize="32sp" />
 
         <Button
@@ -82,7 +85,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:text="@string/text_back"
-            android:textColor="@color/bright_foreground_inverse_material_light"
+            android:textColor="@color/material_blue_grey_950"
             android:textSize="28sp" />
     </LinearLayout>
 
@@ -92,5 +95,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|top"
         android:text="@string/text_join"
-        android:textColor="@color/bright_foreground_inverse_material_light"/>
+        android:textColor="@color/material_blue_grey_950" />
 </FrameLayout>

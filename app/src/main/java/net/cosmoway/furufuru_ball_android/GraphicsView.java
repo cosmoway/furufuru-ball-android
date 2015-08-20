@@ -75,7 +75,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         getHolder().addCallback(this);
         // 描画用の準備
         mPaint = new Paint();
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.YELLOW);
         // Get the system-service.
         WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = window.getDefaultDisplay();
@@ -84,6 +84,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mWebSocketClient = MyWebSocketClient.newInstance();
         mWebSocketClient.setCallbacks(this);
+        mWebSocketClient.connect();
         mLoop = new Thread(this);
         // Initializeing of acceleraton.
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
@@ -97,6 +98,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mWidth = size.x;
             mHeight = size.y;
         }
+        mJoin = 0;
+        isMoveIn = false;
+        isRunning = false;
     }
 
     @Override
@@ -109,7 +113,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // SurfaceView生成時に呼び出されるメソッド。
         // 今はとりあえず背景を青にするだけ。
         mCanvas = holder.lockCanvas();
-        mCanvas.drawColor(Color.BLUE);
+        mCanvas.drawColor(Color.CYAN);
         holder.unlockCanvasAndPost(mCanvas);
         mDiameter = mWidth / 10;
         // Regist the service of sensor.
@@ -122,19 +126,16 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mManager.registerListener(this, s, SENSOR_DELAY);
             }
         }
-        mWebSocketClient.connect();
+        //mWebSocketClient.connect();
     }
 
     public void onStart() {
         sendJson("{\"game\":\"start\"}");
+        mLoop.start();
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
-        mTime = 0;
-        mStopTime = 0;
-        mCurrentTime = 0;
-        mSTime = 0;
-        mLoop.start();
+        isRunning = true;
     }
 
     @Override
@@ -163,7 +164,29 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     @Override
+    public void join() {
+        mJoin = mWebSocketClient.mCount;
+    }
+
+    @Override
+    public void gameOver() {
+        mManager.unregisterListener(this);
+        mWebSocketClient.close();
+        isMoveIn = false;
+        Log.d("GV", "GameOver");
+    }
+
+    @Override
+    public void start() {
+        mTime = 0;
+        mStopTime = 0;
+        mCurrentTime = 0;
+        mSTime = 0;
+    }
+
+    @Override
     public void moveIn() {
+        isMoveIn = true;
         if (mCircleX > mWidth + mDiameter * 3) {
             mCircleX = (float) (mWidth + mDiameter * 3);
             mCircleVx = -30;
@@ -179,26 +202,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
             mCircleVy = 30;
         }
         mStartTime = System.currentTimeMillis();
-        isMoveIn = true;
-    }
-
-    @Override
-    public void join() {
-
-    }
-
-    @Override
-    public void gameOver() {
-        mManager.unregisterListener(this);
-        mWebSocketClient.close();
-        mWebSocketClient.close();
-        isMoveIn = false;
-        Log.d("GV", "GameOver");
-    }
-
-    @Override
-    public void start() {
-
     }
 
 
@@ -213,12 +216,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 e.printStackTrace();
             }
             if (isMoveIn) {
-                mCanvas = getHolder().lockCanvas();
+                //mCanvas = getHolder().lockCanvas();
                 if (mCanvas != null) {
-                    mCanvas.drawColor(Color.BLUE);
+                    mCanvas.drawColor(Color.CYAN);
                     // 円を描画する
+                    //mPaint.setColor(Color.YELLOW);
                     mCanvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
-                    getHolder().unlockCanvasAndPost(mCanvas);
+                    //getHolder().unlockCanvasAndPost(mCanvas);
                     mCurrentTime = System.currentTimeMillis() - mStartTime;
                     mTime = mCurrentTime + mSTime;
                     // 円の座標を移動させる
@@ -229,7 +233,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
                     // 画面の領域を超えた？
                     onCollision();
-                    if (mTime > 10000 || mTime > INIT_TIME - (mJoin + 1)) {
+                    if (mTime > 10000 /*|| mTime > INIT_TIME - (mJoin + 1)*/) {
                         mPaint.setColor(Color.GRAY);
                         //10秒経過したら灰色となりタイムオーバー
                         mManager.unregisterListener(this);

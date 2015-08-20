@@ -7,7 +7,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -15,12 +14,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
-
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks {
 
@@ -46,7 +39,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         super.onCreate(savedInstanceState);
         mWebSocketClient = MyWebSocketClient.newInstance();
         mWebSocketClient.setCallbacks(this);
-        mWebSocketClient.connect();
+        //mWebSocketClient.connect();
         mContext = getApplicationContext();
         setContentView(R.layout.main);
         //オーバーレイするSurfaceView
@@ -57,60 +50,23 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         //ここで半透明にする
         mOverLayHolder.setFormat(PixelFormat.TRANSLUCENT);
         mOverLayHolder.addCallback(mOverlayGraphicsView);
-
         //背景になるSurfaceView
         mGraphicsView = new GraphicsView(mContext);
         mSurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(mGraphicsView);
-
+        TextView text = (TextView) findViewById(R.id.text_join);
+        text.setText("Join：" + 0);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mGraphicsView.onStart();
+                findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
+                findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
             }
         });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        if ("sdk".equals(Build.PRODUCT)) {
-            // エミュレータの場合はIPv6を無効    ----1
-            java.lang.System.setProperty("java.net.preferIPv6Addresses", "false");
-            java.lang.System.setProperty("java.net.preferIPv4Stack", "true");
-        }
-
-        try {
-            URI uri = new URI("ws://10.0.2.2:3333");
-            WebSocketClient client = new WebSocketClient(uri) {
-
-                @Override
-                public void onOpen(ServerHandshake handshake) {
-                    Log.d(TAG, "onOpen");
-                }
-
-                @Override
-                public void onMessage(final String message) {
-                    Log.d(TAG, "onMessage");
-                    Log.d(TAG, "Message:" + message);
-                }
-
-                @Override
-                public void onError(Exception ex) {
-                    Log.d(TAG, "onError");
-                    ex.printStackTrace();
-                }
-
-                @Override
-                public void onClose(int code, String reason, boolean remote) {
-                    Log.d(TAG, "onClose");
-                }
-            };
-
-            client.connect();
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setBearingRequired(false);  // 方位不要
@@ -152,15 +108,13 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void join() {
-        mGraphicsView.mJoin++;
         TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("いまのおともだちは" + mGraphicsView.mJoin + "にんです。");
+        text.setText("Join：" + mWebSocketClient.mCount);
     }
 
     @Override
     public void start() {
-        findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
-        findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+
     }
 
     @Override
@@ -168,12 +122,12 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
         findViewById(R.id.view_result).setVisibility(View.VISIBLE);
         TextView result = (TextView) findViewById(R.id.text_result);
-        if (mGraphicsView.mTime > 10000 || mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)) {
-            result.setText("あなたのきろくは0びょうでした。");
+        if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
+            result.setText("Time　----");
         } else {
-            result.setText("あなたのきろくは" + ((double) mGraphicsView.mTime / 1000) + "びょうでした。");
+            result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
         }
-        mWebSocketClient.close();
+        //mWebSocketClient.close();
         findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

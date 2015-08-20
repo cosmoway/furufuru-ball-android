@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, furu-furu-ball!</string>
     <string name="app_name">ふるふるボール</string>
     <string name="text_join">いまのおともだちは0にんです。</string>
     <string name="text_title">ふるふるボール</string>
-    <string name="text_start">はじめる</string>
-    <string name="text_game_set">おしまい</string>
-    <string name="text_back">さいしょにもどる</string>
+    <string name="text_start">Start</string>
+    <string name="text_game_set">RESULT</string>
+    <string name="text_back">next</string>
     <string name="text_result">あなたのきろくは1.234びょうです。</string>
-    <string name="text_title2">the Furu-Furu-Ball</string>
+    <!--<string name="text_title2">the Furu-Furu-Ball</string>-->
 </resources>
