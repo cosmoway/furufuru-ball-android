@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -119,6 +120,8 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 helpText.setText(text);
                 helpText.setGravity(Gravity.LEFT);
                     mPopupWindow.setContentView(popupView);
+                    //背景に透明な画像を設定
+                    mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.popup_bg));
                     // タップ時に他のViewでキャッチされないための設定
                     mPopupWindow.setOutsideTouchable(true);
                     mPopupWindow.setFocusable(true);
