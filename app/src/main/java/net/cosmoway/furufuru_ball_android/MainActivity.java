@@ -9,10 +9,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks {
@@ -24,6 +28,8 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private SurfaceView mOverLaySurfaceView;
     private SurfaceHolder mOverLayHolder;
     private OverlayGraphicsView mOverlayGraphicsView;
+
+    private PopupWindow mPopupWindow;
 
     private Context mContext;
 
@@ -62,6 +68,48 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 mGraphicsView.onStart();
                 findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+            }
+        });
+        findViewById(R.id.button_help).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupWindow = new PopupWindow(MainActivity.this);
+
+                //レイアウト設定
+                View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+                ImageButton btn = (ImageButton) popupView.findViewById(R.id.button_close);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (mPopupWindow.isShowing()) {
+                            mPopupWindow.dismiss();
+                        }
+
+                    }
+                });
+
+                try {
+                    mPopupWindow.setContentView(popupView);
+                    /*
+                    //背景設定
+                    mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.styleable.PopupWindow_popupBackground));
+                    */
+
+                    // タップ時に他のViewでキャッチされないための設定
+                    mPopupWindow.setOutsideTouchable(true);
+                    mPopupWindow.setFocusable(true);
+
+                    // 表示サイズの設定
+                    float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+
+                    mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.setWidth((int) width);
+                    mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+                    mPopupWindow.showAtLocation(v, Gravity.CENTER,  0, 0);
+                } catch (Exception e) {
+
+                }
             }
         });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
