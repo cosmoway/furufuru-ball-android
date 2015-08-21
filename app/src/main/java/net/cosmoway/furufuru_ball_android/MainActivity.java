@@ -2,7 +2,9 @@ package net.cosmoway.furufuru_ball_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -120,7 +122,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 helpText.setText(text);
                 mPopupWindow.setContentView(popupView);
                 //背景に透明な画像を設定
-                mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.popup_bg));
+                mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 // タップ時に他のViewでキャッチされないための設定
                 mPopupWindow.setOutsideTouchable(true);
                 mPopupWindow.setFocusable(true);
