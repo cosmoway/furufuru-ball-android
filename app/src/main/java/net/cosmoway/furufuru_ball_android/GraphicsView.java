@@ -76,8 +76,11 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     protected boolean isRunning;
 
-    public static final int INIT_TIME = 21000;
     protected int mJoin;
+
+    public static boolean isTimeUp(long timeMillis, int join) {
+        return timeMillis >= Math.max(21 - join, 10)*1000;
+    }
 
     // Constructor
     public GraphicsView(Context context) {
@@ -245,7 +248,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
                     // 画面の領域を超えた？
                     onCollision();
-                    if (mTime > 10000 /*|| mTime > INIT_TIME - (mJoin + 1)*/) {
+                    if (GraphicsView.isTimeUp(mTime, mJoin)) {
                         mPaint.setColor(Color.GRAY);
                         //10秒経過したら灰色となりタイムオーバー
                         mManager.unregisterListener(this);
