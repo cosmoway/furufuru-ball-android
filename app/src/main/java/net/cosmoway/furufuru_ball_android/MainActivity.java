@@ -112,27 +112,25 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                         if (is != null) is.close();
                         if (br != null) br.close();
                     }
-                } catch (IOException e){
-                    Log.i(TAG,"error");
+                } catch (IOException e) {
+                    Log.i(TAG, "error");
                 }
 
                 TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
                 helpText.setText(text);
-                helpText.setGravity(Gravity.LEFT);
-                    mPopupWindow.setContentView(popupView);
-                    //背景に透明な画像を設定
-                    mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this,R.drawable.popup_bg));
-                    // タップ時に他のViewでキャッチされないための設定
-                    mPopupWindow.setOutsideTouchable(true);
-                    mPopupWindow.setFocusable(true);
+                mPopupWindow.setContentView(popupView);
+                //背景に透明な画像を設定
+                mPopupWindow.setBackgroundDrawable(ContextCompat.getDrawable(MainActivity.this, R.drawable.popup_bg));
+                // タップ時に他のViewでキャッチされないための設定
+                mPopupWindow.setOutsideTouchable(true);
+                mPopupWindow.setFocusable(true);
+                // 表示サイズの設定
+                float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
 
-                    // 表示サイズの設定
-                    float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
-
-                    mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
-                    mPopupWindow.setWidth((int) width);
-                    mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-                    mPopupWindow.showAtLocation(v, Gravity.CENTER,  0, 0);
+                mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.setWidth((int) width);
+                mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
             }
         });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

@@ -18,7 +18,7 @@
         android:textColor="@color/material_blue_grey_950"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
+        android:gravity="left"
         android:padding="20dp"/>
 
    </LinearLayout>
