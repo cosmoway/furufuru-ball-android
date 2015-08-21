@@ -79,7 +79,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     protected int mJoin;
 
     public static boolean isTimeUp(long timeMillis, int join) {
-        return timeMillis >= Math.max(21 - join, 10)*1000;
+        return timeMillis >= Math.max(21 - join, 10) * 1000;
     }
 
     // Constructor
