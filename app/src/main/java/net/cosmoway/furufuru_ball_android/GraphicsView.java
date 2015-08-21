@@ -73,7 +73,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         super(context);
         // SurfaceView描画に用いるコールバックを登録する。
         getHolder().addCallback(this);
-        // 描画用の準備
+        // ボール描画用の準備
         mPaint = new Paint();
         mPaint.setColor(Color.YELLOW);
         // Get the system-service.
@@ -100,7 +100,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         mJoin = 0;
         isMoveIn = false;
-        isRunning = true;
+        isRunning = false;
         mLoop.start();
     }
 
@@ -116,25 +116,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCanvas = holder.lockCanvas();
         mCanvas.drawColor(Color.CYAN);
         holder.unlockCanvasAndPost(mCanvas);
-        // Regist the service of sensor.
-        ArrayList<List<Sensor>> sensors = new ArrayList<>();
-        sensors.add(mManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION));
-        sensors.add(mManager.getSensorList(Sensor.TYPE_ACCELEROMETER));
-        for (List<Sensor> sensor : sensors) {
-            if (sensor.size() > 0) {
-                Sensor s = sensor.get(0);
-                mManager.registerListener(this, s, SENSOR_DELAY);
-            }
-        }
         //mWebSocketClient.connect();
     }
 
     public void onStart() {
         sendJson("{\"game\":\"start\"}");
-        mDiameter = mWidth / 10;
-        mCircleX = -mDiameter * 3;
-        mCircleY = 0;
         mCircleVx = 30;
+        isRunning = true;
     }
 
     @Override
@@ -168,15 +156,22 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void gameOver() {
-        mManager.unregisterListener(this);
-        mWebSocketClient.close();
-        isMoveIn = false;
-        Log.d("GV", "GameOver");
-    }
-
-    @Override
     public void start() {
+        // Regist the service of sensor.
+        ArrayList<List<Sensor>> sensors = new ArrayList<>();
+        sensors.add(mManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION));
+        sensors.add(mManager.getSensorList(Sensor.TYPE_ACCELEROMETER));
+        for (List<Sensor> sensor : sensors) {
+            if (sensor.size() > 0) {
+                Sensor s = sensor.get(0);
+                mManager.registerListener(this, s, SENSOR_DELAY);
+            }
+        }
+        isRunning = true;
+        mDiameter = mWidth / 10;
+        mCircleX = -mDiameter * 3;
+        mCircleY = 0;
+
         mTime = 0;
         mStopTime = 0;
         mCurrentTime = 0;
@@ -203,6 +198,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStartTime = System.currentTimeMillis();
     }
 
+    @Override
+    public void gameOver() {
+        mManager.unregisterListener(this);
+        mWebSocketClient.close();
+        isMoveIn = false;
+        Log.d("GV", "GameOver");
+    }
 
     @Override
     public void run() {
