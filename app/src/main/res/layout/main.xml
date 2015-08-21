@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@null"
         android:background="@null"
-        android:src="@mipmap/Help.png"
+        android:src="@mipmap/help"
         android:padding="10dp"/>
 
     <LinearLayout
