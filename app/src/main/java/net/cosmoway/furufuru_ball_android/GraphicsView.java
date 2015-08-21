@@ -9,8 +9,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Vibrator;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -94,17 +96,24 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mLoop = new Thread(this);
+// ActionBarの高さを計算します
+        TypedValue value = new TypedValue();
+        int barHeight = 0;
+        if (context.getTheme().resolveAttribute(android.R.attr.actionBarSize, value, true)) {
+            barHeight = TypedValue.complexToDimensionPixelSize(value.data, getResources().getDisplayMetrics());
+        }
         // Initializeing of acceleraton.
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
-        if (android.os.Build.VERSION.SDK_INT < 14) {
+        if (Build.VERSION.SDK_INT < 14) {
             mWidth = display.getWidth();
             mHeight = display.getHeight();
         } else {
             display.getSize(size);
             mWidth = size.x;
-            mHeight = size.y;
+            mHeight = size.y + barHeight;
+            Log.d("Height", String.valueOf(size.y));
         }
         mJoin = 0;
         isMoveIn = false;
