@@ -19,6 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@null"
+        android:background="@null"
         android:src="@mipmap/help" />
 
     <LinearLayout
