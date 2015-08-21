@@ -9,10 +9,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@null"
-        android:src="@mipmap/cancel"/>
+        android:src="@mipmap/cancel"
+        android:padding="5dp"/>
     <TextView
         android:id="@+id/text_help"
         android:background="@color/background_material_light"
+        android:textColor="@color/material_blue_grey_950"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text=""
