@@ -207,7 +207,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
                 TextView result = (TextView) findViewById(R.id.text_result);
                 TextView gameSet = (TextView) findViewById(R.id.text_game_set);
-                if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
+                if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoin)) {
                     gameSet.setText(R.string.text_game_over);
                     result.setText("Time　----");
                 } else {
