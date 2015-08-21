@@ -199,7 +199,9 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void gameOver() {
-
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
                 mGraphicsView.gameOver();
                 findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
@@ -220,39 +222,41 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
                     }
                 });
-    }
-
-            @Override
-            public void onDestroy() {
-                super.onDestroy();
-                if (mPopupWindow != null && mPopupWindow.isShowing()) {
-                    mPopupWindow.dismiss();
-                }
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
+        });
+             }
 
-            @Override
-            public void onGameStart() {
-                sendJson("{\"game\":\"start\"}");
-            }
+             @Override
+             public void onDestroy() {
+                 super.onDestroy();
+                 if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                     mPopupWindow.dismiss();
+                 }
+                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+             }
 
-            @Override
-            public void onMoveOut() {
-                sendJson("{\"move\":\"out\"}");
-            }
+             @Override
+             public void onGameStart() {
+                 sendJson("{\"game\":\"start\"}");
+             }
 
-            @Override
-            public void onGameOver() {
-                sendJson("{\"game\":\"over\"}");
-            }
+             @Override
+             public void onMoveOut() {
+                 sendJson("{\"move\":\"out\"}");
+             }
 
-            private void sendJson(String json) {
-                if (mWebSocketClient.isClosed()) {
-                    mWebSocketClient.connect();
-                }
-                if (mWebSocketClient.isOpen()) {
-                    mWebSocketClient.send(json);
-                }
-            }
+             @Override
+             public void onGameOver() {
+                 sendJson("{\"game\":\"over\"}");
+             }
 
-        }
+             private void sendJson(String json) {
+                 if (mWebSocketClient.isClosed()) {
+                     mWebSocketClient.connect();
+                 }
+                 if (mWebSocketClient.isOpen()) {
+                     mWebSocketClient.send(json);
+                 }
+             }
+
+         }
