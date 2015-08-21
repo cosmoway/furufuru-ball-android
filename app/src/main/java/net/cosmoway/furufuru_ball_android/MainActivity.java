@@ -218,7 +218,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mGraphicsView.isRunning = false;
+                        mGraphicsView.init();
                         findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
