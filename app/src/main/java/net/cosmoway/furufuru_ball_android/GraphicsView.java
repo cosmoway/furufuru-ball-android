@@ -61,7 +61,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private final int SENSOR_DELAY;
     // Vibration 振動
     private Vibrator mVib;
-    private MyWebSocketClient mWebSocketClient;
     // Speed(scalar)
     private static final int SPEED = 100;
     // Flag
@@ -140,7 +139,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mManager.unregisterListener(this);
-        mWebSocketClient.close();
+//        mWebSocketClient.close();
     }
 
     public void onSensorChanged(SensorEvent event) {
@@ -209,7 +208,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     public void gameOver() {
         mManager.unregisterListener(this);
-        mWebSocketClient.close();
+//        mWebSocketClient.close();
         isMoveIn = false;
         Log.d("GV", "GameOver");
     }
