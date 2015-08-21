@@ -61,7 +61,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private final int SENSOR_DELAY;
     // Vibration 振動
     private Vibrator mVib;
-    private MyWebSocketClient mWebSocketClient;
     // Speed(scalar)
     private static final int SPEED = 100;
     // Flag
@@ -72,6 +71,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private long mSTime;
     private long mStartTime;
     private long mStopTime;
+
+    private SurfaceHolder mHolder;
 
     protected boolean isRunning;
 
@@ -108,7 +109,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mJoin = 0;
         isMoveIn = false;
         isRunning = false;
-        mLoop.start();
+
     }
 
     @Override
@@ -123,6 +124,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCanvas = holder.lockCanvas();
         mCanvas.drawColor(Color.CYAN);
         holder.unlockCanvasAndPost(mCanvas);
+        mHolder = holder;
     }
 
     public void setCallback(Callback callback) {
@@ -135,12 +137,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         mCircleVx = 30;
         isRunning = true;
+        mLoop.start();
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mManager.unregisterListener(this);
-        mWebSocketClient.close();
+//        mWebSocketClient.close();
     }
 
     public void onSensorChanged(SensorEvent event) {
@@ -209,7 +212,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     public void gameOver() {
         mManager.unregisterListener(this);
-        mWebSocketClient.close();
+//        mWebSocketClient.close();
         isMoveIn = false;
         Log.d("GV", "GameOver");
     }
@@ -225,13 +228,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 e.printStackTrace();
             }
             if (isMoveIn) {
-                Canvas canvas = getHolder().lockCanvas();
+                Canvas canvas = mHolder.lockCanvas();
                 if (canvas != null) {
                     canvas.drawColor(Color.CYAN);
                     // 円を描画する
                     //mPaint.setColor(Color.YELLOW);
                     canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
-                    getHolder().unlockCanvasAndPost(canvas);
+                    mHolder.unlockCanvasAndPost(canvas);
                     mCurrentTime = System.currentTimeMillis() - mStartTime;
                     mTime = mCurrentTime + mSTime;
                     // 円の座標を移動させる
