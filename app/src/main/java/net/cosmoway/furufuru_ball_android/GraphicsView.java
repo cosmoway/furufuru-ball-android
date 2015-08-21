@@ -151,8 +151,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     @Override
-    public void join() {
-        mJoin = mWebSocketClient.mCount;
+    public void join(int count) {
+        mJoin = count;
     }
 
     @Override

@@ -13,12 +13,11 @@ import java.net.URISyntaxException;
 public class MyWebSocketClient extends WebSocketClient {
 
     private static final String TAG = "MyWebSocketClient";
-    int mCount = 0;
 
     public interface MyCallbacks {
         void moveIn();
 
-        void join();
+        void join(int count);
 
         void gameOver();
 
@@ -80,8 +79,8 @@ public class MyWebSocketClient extends WebSocketClient {
                 str = json.getString("player");
                 if (str != null) {
                     if (str.equals("change")) {
-                        mCount = json.getInt("count");
-                        mCallbacks.join();
+                        int count = json.getInt("count");
+                        mCallbacks.join(count);
                     }
                 }
             }

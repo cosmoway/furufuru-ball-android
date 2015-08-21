@@ -106,9 +106,9 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
-    public void join() {
+    public void join(int count) {
         TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("Join：" + mWebSocketClient.mCount);
+        text.setText("Join：" + count);
     }
 
     @Override
