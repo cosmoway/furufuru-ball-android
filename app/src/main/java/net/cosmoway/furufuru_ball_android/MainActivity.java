@@ -11,7 +11,6 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -200,59 +199,60 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void gameOver() {
-        mGraphicsView.gameOver();
-        findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
-        findViewById(R.id.view_result).setVisibility(View.VISIBLE);
-        TextView result = (TextView) findViewById(R.id.text_result);
-        if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
-            result.setText("Time　----");
-        } else {
-            result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
-        }
-        //mWebSocketClient.close();
-        findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
+
+                mGraphicsView.gameOver();
+                findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
+                findViewById(R.id.view_result).setVisibility(View.VISIBLE);
+                TextView result = (TextView) findViewById(R.id.text_result);
+                if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
+                    result.setText("Time　----");
+                } else {
+                    result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
+                }
+                //mWebSocketClient.close();
+                findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mGraphicsView.isRunning = false;
+                        findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_help).setVisibility(View.VISIBLE);
+                        findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+                    }
+                });
+    }
+
             @Override
-            public void onClick(View v) {
-                mGraphicsView.isRunning = false;
-                findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
-                findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
-                findViewById(R.id.button_help).setVisibility(View.VISIBLE);
-                findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+            public void onDestroy() {
+                super.onDestroy();
+                if (mPopupWindow != null && mPopupWindow.isShowing()) {
+                    mPopupWindow.dismiss();
+                }
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
             }
-        });
-    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
+            @Override
+            public void onGameStart() {
+                sendJson("{\"game\":\"start\"}");
+            }
+
+            @Override
+            public void onMoveOut() {
+                sendJson("{\"move\":\"out\"}");
+            }
+
+            @Override
+            public void onGameOver() {
+                sendJson("{\"game\":\"over\"}");
+            }
+
+            private void sendJson(String json) {
+                if (mWebSocketClient.isClosed()) {
+                    mWebSocketClient.connect();
+                }
+                if (mWebSocketClient.isOpen()) {
+                    mWebSocketClient.send(json);
+                }
+            }
+
         }
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    }
-
-    @Override
-    public void onGameStart() {
-        sendJson("{\"game\":\"start\"}");
-    }
-
-    @Override
-    public void onMoveOut() {
-        sendJson("{\"move\":\"out\"}");
-    }
-
-    @Override
-    public void onGameOver() {
-        sendJson("{\"game\":\"over\"}");
-    }
-
-    private void sendJson(String json) {
-        if (mWebSocketClient.isClosed()) {
-            mWebSocketClient.connect();
-        }
-        if (mWebSocketClient.isOpen()) {
-            mWebSocketClient.send(json);
-        }
-    }
-
-}
