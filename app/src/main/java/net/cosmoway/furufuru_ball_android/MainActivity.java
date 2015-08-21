@@ -77,8 +77,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             @Override
             public void onClick(View v) {
                 mGraphicsView.onStart();
-                findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
-                findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
             }
         });
         findViewById(R.id.button_help).setOnClickListener(new View.OnClickListener() {
@@ -194,7 +192,15 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void start() {
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
+                findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+            }
+        });
         mGraphicsView.start();
+
     }
 
     @Override
