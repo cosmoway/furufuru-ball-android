@@ -2,19 +2,31 @@ package net.cosmoway.furufuru_ball_android;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageButton;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
         GraphicsView.Callback {
@@ -26,6 +38,8 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private SurfaceView mOverLaySurfaceView;
     private SurfaceHolder mOverLayHolder;
     private OverlayGraphicsView mOverlayGraphicsView;
+
+    private PopupWindow mPopupWindow;
 
     private Context mContext;
 
@@ -66,6 +80,63 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 mGraphicsView.onStart();
                 findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+            }
+        });
+        findViewById(R.id.button_help).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPopupWindow = new PopupWindow(MainActivity.this);
+
+                //レイアウト設定
+                View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+                ImageButton btn = (ImageButton) popupView.findViewById(R.id.button_close);
+                btn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if (mPopupWindow.isShowing()) {
+                            mPopupWindow.dismiss();
+                        }
+
+                    }
+                });
+                InputStream is = null;
+                BufferedReader br = null;
+                String text = "";
+                try {
+                    try {
+                        // assetsフォルダ内の sample.txt をオープンする
+                        is = getAssets().open("help.txt");
+                        br = new BufferedReader(new InputStreamReader(is));
+
+                        // １行ずつ読み込み、改行を付加する
+                        String str;
+                        while ((str = br.readLine()) != null) {
+                            text += str + "\n";
+                        }
+                    } finally {
+                        if (is != null) is.close();
+                        if (br != null) br.close();
+                    }
+                } catch (IOException e) {
+                    Log.i(TAG, "error");
+                }
+
+                TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
+                helpText.setText(text);
+                mPopupWindow.setContentView(popupView);
+                //背景に透明な画像を設定
+                mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                // タップ時に他のViewでキャッチされないための設定
+                mPopupWindow.setOutsideTouchable(true);
+                mPopupWindow.setFocusable(true);
+                // 表示サイズの設定
+                float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+
+                mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.setWidth((int) width);
+                mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+                mPopupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
             }
         });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -154,6 +225,9 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
