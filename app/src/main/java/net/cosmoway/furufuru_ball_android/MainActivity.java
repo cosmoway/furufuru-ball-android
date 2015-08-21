@@ -208,9 +208,10 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 TextView result = (TextView) findViewById(R.id.text_result);
                 TextView gameSet = (TextView) findViewById(R.id.text_game_set);
                 if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
-                    gameSet.setText("GAME OVER");
+                    gameSet.setText(R.string.text_game_over);
                     result.setText("Time　----");
                 } else {
+                    gameSet.setText(R.string.text_game_set);
                     result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
                 }
                 //mWebSocketClient.close();
