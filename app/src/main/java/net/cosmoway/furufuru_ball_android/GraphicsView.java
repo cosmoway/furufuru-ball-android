@@ -137,7 +137,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         mCircleVx = 30;
         isRunning = true;
-        mLoop.start();
     }
 
     @Override
@@ -189,6 +188,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStopTime = 0;
         mCurrentTime = 0;
         mSTime = 0;
+        mLoop.start();
     }
 
     public void moveIn() {
