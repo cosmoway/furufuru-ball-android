@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -29,6 +30,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private Context mContext;
 
     private MyWebSocketClient mWebSocketClient;
+    private Handler mHandler = new Handler();
 
     private static final String TAG = "Ws";
 
@@ -108,11 +110,16 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
-    public void join(int count) {
+    public void join(final int count) {
         mGraphicsView.join(count);
 
-        TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("Join：" + count);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                TextView text = (TextView) findViewById(R.id.text_join);
+                text.setText("Join：" + count);
+            }
+        });
     }
 
     @Override
