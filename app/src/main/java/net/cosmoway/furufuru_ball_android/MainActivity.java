@@ -225,6 +225,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onDestroy() {
         super.onDestroy();
+        mWebSocketClient.close();
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
