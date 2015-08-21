@@ -224,39 +224,40 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 });
             }
         });
-             }
+    }
 
-             @Override
-             public void onDestroy() {
-                 super.onDestroy();
-                 if (mPopupWindow != null && mPopupWindow.isShowing()) {
-                     mPopupWindow.dismiss();
-                 }
-                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-             }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mWebSocketClient.close();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+    }
 
-             @Override
-             public void onGameStart() {
-                 sendJson("{\"game\":\"start\"}");
-             }
+    @Override
+    public void onGameStart() {
+        sendJson("{\"game\":\"start\"}");
+    }
 
-             @Override
-             public void onMoveOut() {
-                 sendJson("{\"move\":\"out\"}");
-             }
+    @Override
+    public void onMoveOut() {
+        sendJson("{\"move\":\"out\"}");
+    }
 
-             @Override
-             public void onGameOver() {
-                 sendJson("{\"game\":\"over\"}");
-             }
+    @Override
+    public void onGameOver() {
+        sendJson("{\"game\":\"over\"}");
+    }
 
-             private void sendJson(String json) {
-                 if (mWebSocketClient.isClosed()) {
-                     mWebSocketClient.connect();
-                 }
-                 if (mWebSocketClient.isOpen()) {
-                     mWebSocketClient.send(json);
-                 }
-             }
+    private void sendJson(String json) {
+        if (mWebSocketClient.isClosed()) {
+            mWebSocketClient.connect();
+        }
+        if (mWebSocketClient.isOpen()) {
+            mWebSocketClient.send(json);
+        }
+    }
 
-         }
+}
