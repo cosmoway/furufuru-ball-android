@@ -19,6 +19,10 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks {
 
     private SurfaceView mSurfaceView;
@@ -88,6 +92,31 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
                     }
                 });
+                InputStream is = null;
+                BufferedReader br = null;
+                String text = "";
+                try {
+                    try {
+                        // assetsフォルダ内の sample.txt をオープンする
+                        is = getAssets().open("help.txt");
+                        br = new BufferedReader(new InputStreamReader(is));
+
+                        // １行ずつ読み込み、改行を付加する
+                        String str;
+                        while ((str = br.readLine()) != null) {
+                            text += str + "\n";
+                        }
+                    } finally {
+                        if (is != null) is.close();
+                        if (br != null) br.close();
+                    }
+                } catch (Exception e){
+                    // エラー発生時の処理
+                }
+
+                TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
+                helpText.setText(text);
+                helpText.setGravity(Gravity.LEFT);
 
                 try {
                     mPopupWindow.setContentView(popupView);

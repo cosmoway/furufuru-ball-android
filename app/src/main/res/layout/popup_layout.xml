@@ -10,8 +10,11 @@
         android:layout_gravity="end"
         android:src="@mipmap/cancel"/>
     <TextView
+        android:id="@+id/text_help"
+        android:background="@color/background_material_light"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:text=""
         android:gravity="center"/>
 
    </LinearLayout>
