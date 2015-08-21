@@ -43,7 +43,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mContext = getApplicationContext();
         setContentView(R.layout.main);
         //オーバーレイするSurfaceView
-
         mOverlayGraphicsView = new OverlayGraphicsView();
         mOverLaySurfaceView = (SurfaceView) findViewById(R.id.overLaySurfaceView);
         mOverLayHolder = mOverLaySurfaceView.getHolder();

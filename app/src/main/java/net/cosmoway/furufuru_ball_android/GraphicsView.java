@@ -100,7 +100,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         }
         mJoin = 0;
         isMoveIn = false;
-        isRunning = false;
+        isRunning = true;
+        mLoop.start();
     }
 
     @Override
@@ -111,11 +112,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         // SurfaceView生成時に呼び出されるメソッド。
-        // 今はとりあえず背景を青にするだけ。
+        // 今はとりあえず背景をシアンにするだけ。
         mCanvas = holder.lockCanvas();
         mCanvas.drawColor(Color.CYAN);
         holder.unlockCanvasAndPost(mCanvas);
-        mDiameter = mWidth / 10;
         // Regist the service of sensor.
         ArrayList<List<Sensor>> sensors = new ArrayList<>();
         sensors.add(mManager.getSensorList(Sensor.TYPE_LINEAR_ACCELERATION));
@@ -131,11 +131,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     public void onStart() {
         sendJson("{\"game\":\"start\"}");
-        mLoop.start();
+        mDiameter = mWidth / 10;
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
         mCircleVx = 30;
-        isRunning = true;
     }
 
     @Override
@@ -216,13 +215,13 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 e.printStackTrace();
             }
             if (isMoveIn) {
-                //mCanvas = getHolder().lockCanvas();
-                if (mCanvas != null) {
-                    mCanvas.drawColor(Color.CYAN);
+                Canvas canvas = getHolder().lockCanvas();
+                if (canvas != null) {
+                    canvas.drawColor(Color.CYAN);
                     // 円を描画する
                     //mPaint.setColor(Color.YELLOW);
-                    mCanvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
-                    //getHolder().unlockCanvasAndPost(mCanvas);
+                    canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
+                    getHolder().unlockCanvasAndPost(canvas);
                     mCurrentTime = System.currentTimeMillis() - mStartTime;
                     mTime = mCurrentTime + mSTime;
                     // 円の座標を移動させる
