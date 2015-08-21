@@ -199,24 +199,29 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void gameOver() {
-        mGraphicsView.gameOver();
-        findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
-        findViewById(R.id.view_result).setVisibility(View.VISIBLE);
-        TextView result = (TextView) findViewById(R.id.text_result);
-        if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
-            result.setText("Time　----");
-        } else {
-            result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
-        }
-        //mWebSocketClient.close();
-        findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
+        mHandler.post(new Runnable() {
             @Override
-            public void onClick(View v) {
-                mGraphicsView.isRunning = false;
-                findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
-                findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
-                findViewById(R.id.button_help).setVisibility(View.VISIBLE);
-                findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+            public void run() {
+                mGraphicsView.gameOver();
+                findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
+                findViewById(R.id.view_result).setVisibility(View.VISIBLE);
+                TextView result = (TextView) findViewById(R.id.text_result);
+                if (mGraphicsView.mTime > 10000 /*|| mGraphicsView.mTime > GraphicsView.INIT_TIME - (mGraphicsView.mJoin + 1)*/) {
+                    result.setText("Time　----");
+                } else {
+                    result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
+                }
+                //mWebSocketClient.close();
+                findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mGraphicsView.isRunning = false;
+                        findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_help).setVisibility(View.VISIBLE);
+                        findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+                    }
+                });
             }
         });
     }
