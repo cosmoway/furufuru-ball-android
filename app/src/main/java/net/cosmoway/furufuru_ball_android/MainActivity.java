@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,7 +16,8 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks {
+public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
+        GraphicsView.Callback {
 
     private SurfaceView mSurfaceView;
     private SurfaceHolder mHolder;
@@ -28,6 +30,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private Context mContext;
 
     private MyWebSocketClient mWebSocketClient;
+    private Handler mHandler = new Handler();
 
     private static final String TAG = "Ws";
 
@@ -39,7 +42,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         super.onCreate(savedInstanceState);
         mWebSocketClient = MyWebSocketClient.newInstance();
         mWebSocketClient.setCallbacks(this);
-        //mWebSocketClient.connect();
+        mWebSocketClient.connect();
         mContext = getApplicationContext();
         setContentView(R.layout.main);
         //オーバーレイするSurfaceView
@@ -51,6 +54,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mOverLayHolder.addCallback(mOverlayGraphicsView);
         //背景になるSurfaceView
         mGraphicsView = new GraphicsView(mContext);
+        mGraphicsView.setCallback(this);
         mSurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mHolder = mSurfaceView.getHolder();
         mHolder.addCallback(mGraphicsView);
@@ -102,22 +106,30 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
 
     @Override
     public void moveIn() {
-
+        mGraphicsView.moveIn();
     }
 
     @Override
-    public void join() {
-        TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("Join：" + mWebSocketClient.mCount);
+    public void join(final int count) {
+        mGraphicsView.join(count);
+
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                TextView text = (TextView) findViewById(R.id.text_join);
+                text.setText("Join：" + count);
+            }
+        });
     }
 
     @Override
     public void start() {
-
+        mGraphicsView.start();
     }
 
     @Override
     public void gameOver() {
+        mGraphicsView.gameOver();
         findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
         findViewById(R.id.view_result).setVisibility(View.VISIBLE);
         TextView result = (TextView) findViewById(R.id.text_result);
@@ -144,4 +156,29 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         super.onDestroy();
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
+
+    @Override
+    public void onGameStart() {
+        sendJson("{\"game\":\"start\"}");
+    }
+
+    @Override
+    public void onMoveOut() {
+        sendJson("{\"move\":\"out\"}");
+    }
+
+    @Override
+    public void onGameOver() {
+        sendJson("{\"game\":\"over\"}");
+    }
+
+    private void sendJson(String json) {
+        if (mWebSocketClient.isClosed()) {
+            mWebSocketClient.connect();
+        }
+        if (mWebSocketClient.isOpen()) {
+            mWebSocketClient.send(json);
+        }
+    }
+
 }
