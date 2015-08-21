@@ -20,7 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
-        SensorEventListener, Runnable, MyWebSocketClient.MyCallbacks {
+        SensorEventListener, Runnable {
+
+    public interface Callback {
+        void onGameStart();
+
+        void onMoveOut();
+
+        void onGameOver();
+    }
+
+    private Callback mCallback;
     //Canvas
     private Canvas mCanvas;
     private int mWidth;
@@ -82,9 +92,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         Point size = new Point();
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        mWebSocketClient = MyWebSocketClient.newInstance();
-        mWebSocketClient.setCallbacks(this);
-        mWebSocketClient.connect();
         mLoop = new Thread(this);
         // Initializeing of acceleraton.
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
@@ -116,11 +123,16 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mCanvas = holder.lockCanvas();
         mCanvas.drawColor(Color.CYAN);
         holder.unlockCanvasAndPost(mCanvas);
-        //mWebSocketClient.connect();
+    }
+
+    public void setCallback(Callback callback) {
+        mCallback = callback;
     }
 
     public void onStart() {
-        sendJson("{\"game\":\"start\"}");
+        if (mCallback != null) {
+            mCallback.onGameStart();
+        }
         mCircleVx = 30;
         isRunning = true;
     }
@@ -150,12 +162,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    @Override
-    public void join() {
-        mJoin = mWebSocketClient.mCount;
+    public void join(int count) {
+        mJoin = count;
     }
 
-    @Override
     public void start() {
         // Regist the service of sensor.
         ArrayList<List<Sensor>> sensors = new ArrayList<>();
@@ -178,7 +188,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mSTime = 0;
     }
 
-    @Override
     public void moveIn() {
         isMoveIn = true;
         if (mCircleX > mWidth + mDiameter * 3) {
@@ -198,7 +207,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStartTime = System.currentTimeMillis();
     }
 
-    @Override
     public void gameOver() {
         mManager.unregisterListener(this);
         mWebSocketClient.close();
@@ -247,7 +255,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                             mCircleVy = 0;
                             mCircleAy = 0;
                             mCircleY = mHeight - mDiameter;
-                            sendJson("{\"game\":\"over\"}");
+                            if (mCallback != null) {
+                                mCallback.onGameOver();
+                            }
                             //break;
                         }
                     }
@@ -269,7 +279,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 if (mCircleX < -mDiameter * 3 || mCircleX > mWidth + mDiameter * 3) {
                     //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
-                    sendJson("{\"move\":\"out\"}");
                 }
             }
         }
@@ -285,27 +294,20 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
                     //壁を抜けて相手（自分）にボールが渡る
                     moveOut();
-                    sendJson("{\"move\":\"out\"}");
                 }
             }
         }
     }
 
     private void moveOut() {
+        if (mCallback != null) {
+            mCallback.onMoveOut();
+        }
         isMoveIn = false;
         mCircleVx = 0;
         mCircleVy = 0;
         mStopTime = mCurrentTime;
         mSTime += mStopTime;
         Log.d("Time", String.valueOf(mSTime));
-    }
-
-    private void sendJson(String json) {
-        if (mWebSocketClient.isClosed()) {
-            mWebSocketClient.connect();
-        }
-        if (mWebSocketClient.isOpen()) {
-            mWebSocketClient.send(json);
-        }
     }
 }
