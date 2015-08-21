@@ -20,6 +20,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -110,15 +111,13 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                         if (is != null) is.close();
                         if (br != null) br.close();
                     }
-                } catch (Exception e){
-                    // エラー発生時の処理
+                } catch (IOException e){
+                    Log.i(TAG,"error");
                 }
 
                 TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
                 helpText.setText(text);
                 helpText.setGravity(Gravity.LEFT);
-
-                try {
                     mPopupWindow.setContentView(popupView);
                     /*
                     //背景設定
@@ -136,9 +135,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     mPopupWindow.setWidth((int) width);
                     mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
                     mPopupWindow.showAtLocation(v, Gravity.CENTER,  0, 0);
-                } catch (Exception e) {
-
-                }
             }
         });
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -219,6 +215,9 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 }
