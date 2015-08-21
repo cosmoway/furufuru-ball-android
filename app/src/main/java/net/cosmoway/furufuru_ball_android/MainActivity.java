@@ -119,11 +119,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 helpText.setText(text);
                 helpText.setGravity(Gravity.LEFT);
                     mPopupWindow.setContentView(popupView);
-                    /*
-                    //背景設定
-                    mPopupWindow.setBackgroundDrawable(getResources().getDrawable(R.styleable.PopupWindow_popupBackground));
-                    */
-
                     // タップ時に他のViewでキャッチされないための設定
                     mPopupWindow.setOutsideTouchable(true);
                     mPopupWindow.setFocusable(true);
