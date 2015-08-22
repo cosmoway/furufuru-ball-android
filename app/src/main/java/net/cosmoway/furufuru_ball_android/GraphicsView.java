@@ -271,7 +271,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
         }
-        if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
+        if (mCircleY < mDiameter || mHeight - mDiameter < mCircleY) {
             if (Math.abs(mCircleVy) <= SPEED) {
                 //ぶつかって跳ね返る
                 mVib.vibrate(Math.abs((long) mCircleVy));
