@@ -4,17 +4,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +76,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     protected int mJoin;
 
     public static boolean isTimeUp(long timeMillis, int join) {
-        return timeMillis >= Math.max(21 - join, 10)*1000;
+        return timeMillis >= Math.max(21 - join, 10) * 1000;
     }
 
     // Constructor
@@ -91,29 +88,19 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mPaint = new Paint();
         mPaint.setColor(Color.YELLOW);
         // Get the system-service.
-        WindowManager window = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = window.getDefaultDisplay();
-        Point size = new Point();
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
         mLoop = new Thread(this);
         // Initializeing of acceleraton.
 
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
-        if (android.os.Build.VERSION.SDK_INT < 14) {
-            mWidth = display.getWidth();
-            mHeight = display.getHeight();
-        } else {
-            display.getSize(size);
-            mWidth = size.x;
-            mHeight = size.y;
-        }
         init();
     }
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
+        mWidth = width;
+        mHeight = height;
     }
 
     @Override
@@ -298,7 +285,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 }
             }
         }
-        if (mCircleY < mDiameter || mCircleY > mHeight - mDiameter * 3) {
+        if (mCircleY < mDiameter || mHeight - mDiameter < mCircleY) {
             if (Math.abs(mCircleVy) <= SPEED) {
                 //ぶつかって跳ね返る
                 mVib.vibrate(Math.abs((long) mCircleVy));
