@@ -84,7 +84,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         getHolder().addCallback(this);
         // ボール描画用の準備
         mPaint = new Paint();
-        mPaint.setColor(Color.YELLOW);
         // Get the system-service.
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -111,6 +110,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     public void init() {
+        mPaint.setColor(Color.YELLOW);
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mJoin = 0;
