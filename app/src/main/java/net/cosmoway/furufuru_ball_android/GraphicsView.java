@@ -92,7 +92,6 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
         // Get the system-service.
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        // Initializeing of acceleraton.
     }
 
     @Override
@@ -140,7 +139,6 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mManager.unregisterListener(this);
-//        mWebSocketClient.close();
     }
 
     public void onSensorChanged(SensorEvent event) {
@@ -211,7 +209,6 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
     public void gameOver() {
         mManager.unregisterListener(this);
-//        mWebSocketClient.close();
         isMoveIn = false;
         Log.d("GV", "GameOver");
     }
@@ -253,7 +250,6 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                         if (mCallback != null) {
                             mCallback.onGameOver();
                         }
-                        //break;
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();

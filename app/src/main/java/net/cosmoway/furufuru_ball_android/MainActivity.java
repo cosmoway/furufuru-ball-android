@@ -12,7 +12,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -196,7 +195,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     gameSet.setText(R.string.text_game_set);
                     result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
                 }
-                //mWebSocketClient.close();
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
