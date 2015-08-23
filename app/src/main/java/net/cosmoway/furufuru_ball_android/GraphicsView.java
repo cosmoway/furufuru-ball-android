@@ -249,7 +249,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         mCircleAx = 0;
                         mCircleAy = 0.98f;
                         //重力に任せて下に落ちる
-                        if (mCircleY == mHeight - mDiameter * 3) {
+                        if (mCircleY == mHeight - mDiameter) {
                             isMoveIn = false;
                             mCircleVy = 0;
                             mCircleAy = 0;
