@@ -224,43 +224,40 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 e.printStackTrace();
             }
             if (isMoveIn) {
-                Canvas canvas = mHolder.lockCanvas();
-                if (canvas != null) {
-                    canvas.drawColor(Color.CYAN);
-                    // 円を描画する
-                    //mPaint.setColor(Color.YELLOW);
-                    canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
-                    mHolder.unlockCanvasAndPost(canvas);
-                    mCurrentTime = System.currentTimeMillis() - mStartTime;
-                    mTime = mCurrentTime + mSTime;
-                    // 円の座標を移動させる
-                    mCircleVx += mCircleAx * SENSOR_DELAY;
-                    mCircleVy += mCircleAy * SENSOR_DELAY;
-                    mCircleX += mCircleVx * SENSOR_DELAY;
-                    mCircleY += mCircleVy * SENSOR_DELAY;
+                mCurrentTime = System.currentTimeMillis() - mStartTime;
+                mTime = mCurrentTime + mSTime;
+                // 円の座標を移動させる
+                mCircleVx += mCircleAx * SENSOR_DELAY;
+                mCircleVy += mCircleAy * SENSOR_DELAY;
+                mCircleX += mCircleVx * SENSOR_DELAY;
+                mCircleY += mCircleVy * SENSOR_DELAY;
 
-                    // 画面の領域を超えた？
-                    onCollision();
-                    if (GraphicsView.isTimeUp(mTime, mJoin)) {
-                        mPaint.setColor(Color.GRAY);
-                        //10秒経過したら灰色となりタイムオーバー
-                        mManager.unregisterListener(this);
-                        mCircleVx = 0;
-                        mCircleAx = 0;
-                        mCircleAy = 0.98f;
-                        //重力に任せて下に落ちる
-                        if (mCircleY == mHeight - mDiameter) {
-                            isMoveIn = false;
-                            mCircleVy = 0;
-                            mCircleAy = 0;
-                            mCircleY = mHeight - mDiameter;
-                            if (mCallback != null) {
-                                mCallback.onGameOver();
-                            }
-                            //break;
+                // 画面の領域を超えた？
+                onCollision();
+                if (GraphicsView.isTimeUp(mTime, mJoin)) {
+                    mPaint.setColor(Color.GRAY);
+                    //10秒経過したら灰色となりタイムオーバー
+                    mManager.unregisterListener(this);
+                    mCircleVx = 0;
+                    mCircleAx = 0;
+                    mCircleAy = 0.98f;
+                    //重力に任せて下に落ちる
+                    if (mCircleY == mHeight - mDiameter) {
+                        isMoveIn = false;
+                        mCircleVy = 0;
+                        mCircleAy = 0;
+                        mCircleY = mHeight - mDiameter;
+                        if (mCallback != null) {
+                            mCallback.onGameOver();
                         }
+                        //break;
                     }
                 }
+                Canvas canvas = mHolder.lockCanvas();
+                canvas.drawColor(Color.CYAN);
+                // 円を描画する
+                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
+                mHolder.unlockCanvasAndPost(canvas);
             }
         }
     }
