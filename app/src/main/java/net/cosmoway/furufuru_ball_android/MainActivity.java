@@ -53,9 +53,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mWebSocketClient = MyWebSocketClient.newInstance();
-        mWebSocketClient.setCallbacks(this);
-        mWebSocketClient.connect();
+        connectIfNeeded();
         mContext = getApplicationContext();
         setContentView(R.layout.main);
         //オーバーレイするSurfaceView
@@ -224,13 +222,15 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        mGraphicsView.isRunning = false;
+                        mGraphicsView.init();
+                        connectIfNeeded();
                         findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
                     }
                 });
+                disconnect();
             }
         });
     }
@@ -238,7 +238,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mWebSocketClient.close();
+        disconnect();
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
@@ -261,12 +261,24 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     private void sendJson(String json) {
-        if (mWebSocketClient.isClosed()) {
-            mWebSocketClient.connect();
-        }
+        connectIfNeeded();
         if (mWebSocketClient.isOpen()) {
             mWebSocketClient.send(json);
         }
     }
 
+    private void connectIfNeeded() {
+        if (mWebSocketClient == null || mWebSocketClient.isClosed()) {
+            mWebSocketClient = MyWebSocketClient.newInstance();
+            mWebSocketClient.setCallbacks(MainActivity.this);
+            mWebSocketClient.connect();
+        }
+    }
+
+    private void disconnect() {
+        if (mWebSocketClient != null) {
+            mWebSocketClient.close();
+            mWebSocketClient = null;
+        }
+    }
 }

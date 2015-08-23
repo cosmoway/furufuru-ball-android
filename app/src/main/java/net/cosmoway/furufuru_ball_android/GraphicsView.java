@@ -42,16 +42,14 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private float[] mAcceleration;
     private float[] mLinearAcceleration;
     // 円の加速度
-    private float mCircleAx = 0.0f;
-    private float mCircleAy = 0.0f;
+    private float mCircleAx;
+    private float mCircleAy;
     // 円の移動量
-    private double mCircleVx = 0.0d;
-    private double mCircleVy = 0.0d;
+    private double mCircleVx;
+    private double mCircleVy;
     private static final double REBOUND = 0.9;
     // 描画用
     private Paint mPaint;
-    // Loop
-    private Thread mLoop;
     // SensorManager
     private SensorManager mManager;
     // Delay of sensor
@@ -86,18 +84,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         getHolder().addCallback(this);
         // ボール描画用の準備
         mPaint = new Paint();
-        mPaint.setColor(Color.YELLOW);
         // Get the system-service.
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        mLoop = new Thread(this);
         // Initializeing of acceleraton.
-        mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
-        mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
+
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
-        mJoin = 0;
-        isMoveIn = false;
-        isRunning = false;
     }
 
     @Override
@@ -108,12 +100,27 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // SurfaceView生成時に呼び出されるメソッド。
-        // 今はとりあえず背景をシアンにするだけ。
-        mCanvas = holder.lockCanvas();
-        mCanvas.drawColor(Color.CYAN);
-        holder.unlockCanvasAndPost(mCanvas);
         mHolder = holder;
+        init();
+    }
+
+    public void init() {
+        Canvas canvas = mHolder.lockCanvas();
+        canvas.drawColor(Color.CYAN);
+        mHolder.unlockCanvasAndPost(canvas);
+
+        mPaint.setColor(Color.YELLOW);
+        mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
+        mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
+        mJoin = 0;
+        isMoveIn = false;
+        isRunning = false;
+        // 円の加速度
+        mCircleAx = 0.0f;
+        mCircleAy = 0.0f;
+        // 円の移動量
+        mCircleVx = 0.0d;
+        mCircleVy = 0.0d;
     }
 
     public void setCallback(Callback callback) {
@@ -177,7 +184,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStopTime = 0;
         mCurrentTime = 0;
         mSTime = 0;
-        mLoop.start();
+        new Thread(this).start();
     }
 
     public void moveIn() {
