@@ -90,7 +90,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // Initializeing of acceleraton.
 
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
-        init();
     }
 
     @Override
@@ -101,15 +100,15 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
-        // SurfaceView生成時に呼び出されるメソッド。
-        // 今はとりあえず背景をシアンにするだけ。
-        mCanvas = holder.lockCanvas();
-        mCanvas.drawColor(Color.CYAN);
-        holder.unlockCanvasAndPost(mCanvas);
         mHolder = holder;
+        init();
     }
 
     public void init() {
+        Canvas canvas = mHolder.lockCanvas();
+        canvas.drawColor(Color.CYAN);
+        mHolder.unlockCanvasAndPost(canvas);
+
         mPaint.setColor(Color.YELLOW);
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
