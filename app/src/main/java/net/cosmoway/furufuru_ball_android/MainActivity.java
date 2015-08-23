@@ -30,18 +30,8 @@ import java.io.InputStreamReader;
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
         GraphicsView.Callback {
 
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mHolder;
     private GraphicsView mGraphicsView;
-
-    private SurfaceView mOverLaySurfaceView;
-    private SurfaceHolder mOverLayHolder;
-    private OverlayGraphicsView mOverlayGraphicsView;
-
     private PopupWindow mPopupWindow;
-
-    private Context mContext;
-
     private MyWebSocketClient mWebSocketClient;
     private Handler mHandler = new Handler();
 
@@ -54,21 +44,20 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connectIfNeeded();
-        mContext = getApplicationContext();
         setContentView(R.layout.main);
         //オーバーレイするSurfaceView
-        mOverlayGraphicsView = new OverlayGraphicsView();
-        mOverLaySurfaceView = (SurfaceView) findViewById(R.id.overLaySurfaceView);
-        mOverLayHolder = mOverLaySurfaceView.getHolder();
+        OverlayGraphicsView overlayGraphicsView = new OverlayGraphicsView();
+        SurfaceView overLaySurfaceView = (SurfaceView) findViewById(R.id.overLaySurfaceView);
+        SurfaceHolder overLayHolder = overLaySurfaceView.getHolder();
         //ここで半透明にする
-        mOverLayHolder.setFormat(PixelFormat.TRANSLUCENT);
-        mOverLayHolder.addCallback(mOverlayGraphicsView);
+        overLayHolder.setFormat(PixelFormat.TRANSLUCENT);
+        overLayHolder.addCallback(overlayGraphicsView);
         //背景になるSurfaceView
-        mGraphicsView = new GraphicsView(mContext);
+        mGraphicsView = new GraphicsView(this);
         mGraphicsView.setCallback(this);
-        mSurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
-        mHolder = mSurfaceView.getHolder();
-        mHolder.addCallback(mGraphicsView);
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
+        SurfaceHolder holder = surfaceView.getHolder();
+        holder.addCallback(mGraphicsView);
         TextView text = (TextView) findViewById(R.id.text_join);
         text.setText("Join：" + 0);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
@@ -211,7 +200,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
                 TextView result = (TextView) findViewById(R.id.text_result);
                 TextView gameSet = (TextView) findViewById(R.id.text_game_set);
-                if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoin)) {
+                if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
                     gameSet.setText(R.string.text_game_over);
                     result.setText("Time　----");
                 } else {
