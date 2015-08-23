@@ -4,15 +4,16 @@
     android:layout_height="fill_parent">
 
     <SurfaceView
-        android:id="@+id/overLaySurfaceView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:visibility="invisible" />
-
-    <SurfaceView
         android:id="@+id/mySurfaceView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
+
+    <View
+        android:id="@+id/view_overlay"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="invisible"
+        android:background="#4000" />
 
     <ImageButton
         android:id="@+id/button_help"
