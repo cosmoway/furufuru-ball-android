@@ -288,7 +288,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                 mCircleVy = -mCircleVy * REBOUND;
                 mCircleAy = -mCircleAy;
                 if (mCircleY < mDiameter) mCircleY = mDiameter;
-                else mCircleY = mHeight - mDiameter * 3;
+                else mCircleY = mHeight - mDiameter;
             } else {
                 if (mCircleY < -mDiameter * 3 || mCircleY > mHeight + mDiameter * 3) {
                     //壁を抜けて相手（自分）にボールが渡る
