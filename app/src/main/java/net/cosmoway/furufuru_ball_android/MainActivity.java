@@ -225,12 +225,16 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     @Override
                     public void onClick(View v) {
                         mGraphicsView.init();
+                        mWebSocketClient = MyWebSocketClient.newInstance();
+                        mWebSocketClient.setCallbacks(MainActivity.this);
+                        mWebSocketClient.connect();
                         findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
                     }
                 });
+                mWebSocketClient.close();
             }
         });
     }
