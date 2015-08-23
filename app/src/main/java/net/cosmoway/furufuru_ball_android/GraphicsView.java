@@ -50,8 +50,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private static final double REBOUND = 0.9;
     // 描画用
     private Paint mPaint;
-    // Loop
-    private Thread mLoop;
     // SensorManager
     private SensorManager mManager;
     // Delay of sensor
@@ -90,7 +88,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         // Get the system-service.
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        mLoop = new Thread(this);
         // Initializeing of acceleraton.
 
         SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
@@ -188,7 +185,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mStopTime = 0;
         mCurrentTime = 0;
         mSTime = 0;
-        mLoop.start();
+        new Thread(this).start();
     }
 
     public void moveIn() {
