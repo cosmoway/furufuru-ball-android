@@ -131,7 +131,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         if (mCallback != null) {
             mCallback.onGameStart();
         }
-        mCircleVx = 30;
         isRunning = true;
     }
 
@@ -179,6 +178,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         mDiameter = mWidth / 10;
         mCircleX = -mDiameter * 3;
         mCircleY = 0;
+        mCircleVx = 30;
 
         mTime = 0;
         mStopTime = 0;
