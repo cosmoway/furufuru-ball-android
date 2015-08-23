@@ -44,11 +44,9 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         connectIfNeeded();
         setContentView(R.layout.main);
         //背景になるSurfaceView
-        mGraphicsView = new GraphicsView(this);
-        mGraphicsView.setCallback(this);
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
-        SurfaceHolder holder = surfaceView.getHolder();
-        holder.addCallback(mGraphicsView);
+        mGraphicsView = new GraphicsView(this, surfaceView);
+        mGraphicsView.setCallback(this);
         TextView text = (TextView) findViewById(R.id.text_join);
         text.setText("Join：" + 0);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {

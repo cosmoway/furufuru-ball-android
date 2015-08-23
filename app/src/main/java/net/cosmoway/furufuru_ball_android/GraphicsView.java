@@ -16,8 +16,7 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
-        SensorEventListener, Runnable {
+public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener, Runnable {
 
     public interface Callback {
         void onGameStart();
@@ -85,10 +84,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     // Constructor
-    public GraphicsView(Context context) {
-        super(context);
+    public GraphicsView(Context context, SurfaceView surfaceView) {
         // SurfaceView描画に用いるコールバックを登録する。
-        getHolder().addCallback(this);
+        surfaceView.getHolder().addCallback(this);
         // ボール描画用の準備
         mCirclePaint = new Paint();
         // Get the system-service.
