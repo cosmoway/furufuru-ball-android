@@ -1,9 +1,7 @@
 package net.cosmoway.furufuruball;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
@@ -14,7 +12,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
-import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,18 +27,8 @@ import java.io.InputStreamReader;
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
         GraphicsView.Callback {
 
-    private SurfaceView mSurfaceView;
-    private SurfaceHolder mHolder;
     private GraphicsView mGraphicsView;
-
-    private SurfaceView mOverLaySurfaceView;
-    private SurfaceHolder mOverLayHolder;
-    private OverlayGraphicsView mOverlayGraphicsView;
-
     private PopupWindow mPopupWindow;
-
-    private Context mContext;
-
     private MyWebSocketClient mWebSocketClient;
     private Handler mHandler = new Handler();
 
@@ -54,21 +41,11 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connectIfNeeded();
-        mContext = getApplicationContext();
         setContentView(R.layout.main);
-        //オーバーレイするSurfaceView
-        mOverlayGraphicsView = new OverlayGraphicsView();
-        mOverLaySurfaceView = (SurfaceView) findViewById(R.id.overLaySurfaceView);
-        mOverLayHolder = mOverLaySurfaceView.getHolder();
-        //ここで半透明にする
-        mOverLayHolder.setFormat(PixelFormat.TRANSLUCENT);
-        mOverLayHolder.addCallback(mOverlayGraphicsView);
         //背景になるSurfaceView
-        mGraphicsView = new GraphicsView(mContext);
+        SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
+        mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
-        mSurfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
-        mHolder = mSurfaceView.getHolder();
-        mHolder.addCallback(mGraphicsView);
         TextView text = (TextView) findViewById(R.id.text_join);
         text.setText("Join：" + 0);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
@@ -207,24 +184,23 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             @Override
             public void run() {
                 mGraphicsView.gameOver();
-                findViewById(R.id.overLaySurfaceView).setVisibility(View.VISIBLE);
+                findViewById(R.id.view_overlay).setVisibility(View.VISIBLE);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
                 TextView result = (TextView) findViewById(R.id.text_result);
                 TextView gameSet = (TextView) findViewById(R.id.text_game_set);
-                if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoin)) {
+                if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
                     gameSet.setText(R.string.text_game_over);
                     result.setText("Time　----");
                 } else {
                     gameSet.setText(R.string.text_game_set);
                     result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
                 }
-                //mWebSocketClient.close();
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mGraphicsView.init();
                         connectIfNeeded();
-                        findViewById(R.id.overLaySurfaceView).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.view_overlay).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);

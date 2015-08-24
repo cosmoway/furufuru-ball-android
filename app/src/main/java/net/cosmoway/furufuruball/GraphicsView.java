@@ -16,8 +16,7 @@ import android.view.SurfaceView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
-        SensorEventListener, Runnable {
+public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener, Runnable {
 
     public interface Callback {
         void onGameStart();
@@ -27,17 +26,29 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         void onGameOver();
     }
 
+    /**
+     * 反発係数
+     */
+    private static final double COR = 0.9;
+
+    /**
+     * Delay of sensor
+     */
+    private static final int SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
+
+    /**
+     * Speed(scalar)
+     */
+    private static final int SPEED = 100;
+
     private Callback mCallback;
-    //Canvas
-    private Canvas mCanvas;
     private int mWidth;
     private int mHeight;
     // 円の半径
-    //private final int INIT_DIAMETER = 80;
     private int mDiameter;
     // 円のX,Y座標
-    private float mCircleX = mDiameter;
-    private float mCircleY = mDiameter;
+    private float mCircleX;
+    private float mCircleY;
     // Acceleration 加速
     private float[] mAcceleration;
     private float[] mLinearAcceleration;
@@ -47,17 +58,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     // 円の移動量
     private double mCircleVx;
     private double mCircleVy;
-    private static final double REBOUND = 0.9;
     // 描画用
-    private Paint mPaint;
+    private Paint mCirclePaint;
     // SensorManager
     private SensorManager mManager;
-    // Delay of sensor
-    private final int SENSOR_DELAY;
     // Vibration 振動
-    private Vibrator mVib;
-    // Speed(scalar)
-    private static final int SPEED = 100;
+    private Vibrator mVibrator;
     // Flag
     private boolean isMoveIn = false;
     // Timer
@@ -69,27 +75,23 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     private SurfaceHolder mHolder;
 
-    protected boolean isRunning;
+    private boolean isRunning;
 
-    protected int mJoin;
+    protected int mJoinCount;
 
     public static boolean isTimeUp(long timeMillis, int join) {
         return timeMillis >= Math.max(21 - join, 10) * 1000;
     }
 
     // Constructor
-    public GraphicsView(Context context) {
-        super(context);
+    public GraphicsView(Context context, SurfaceView surfaceView) {
         // SurfaceView描画に用いるコールバックを登録する。
-        getHolder().addCallback(this);
+        surfaceView.getHolder().addCallback(this);
         // ボール描画用の準備
-        mPaint = new Paint();
+        mCirclePaint = new Paint();
         // Get the system-service.
         mManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
-        mVib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        // Initializeing of acceleraton.
-
-        SENSOR_DELAY = SensorManager.SENSOR_DELAY_GAME;
+        mVibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
     }
 
     @Override
@@ -109,10 +111,10 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         canvas.drawColor(Color.CYAN);
         mHolder.unlockCanvasAndPost(canvas);
 
-        mPaint.setColor(Color.YELLOW);
+        mCirclePaint.setColor(Color.YELLOW);
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
-        mJoin = 0;
+        mJoinCount = 0;
         isMoveIn = false;
         isRunning = false;
         // 円の加速度
@@ -137,7 +139,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         mManager.unregisterListener(this);
-//        mWebSocketClient.close();
     }
 
     public void onSensorChanged(SensorEvent event) {
@@ -160,7 +161,7 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     }
 
     public void join(int count) {
-        mJoin = count;
+        mJoinCount = count;
     }
 
     public void start() {
@@ -208,7 +209,6 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
     public void gameOver() {
         mManager.unregisterListener(this);
-//        mWebSocketClient.close();
         isMoveIn = false;
         Log.d("GV", "GameOver");
     }
@@ -234,8 +234,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
 
                 // 画面の領域を超えた？
                 onCollision();
-                if (GraphicsView.isTimeUp(mTime, mJoin)) {
-                    mPaint.setColor(Color.GRAY);
+                if (GraphicsView.isTimeUp(mTime, mJoinCount)) {
+                    mCirclePaint.setColor(Color.GRAY);
                     //10秒経過したら灰色となりタイムオーバー
                     mManager.unregisterListener(this);
                     mCircleVx = 0;
@@ -250,13 +250,12 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
                         if (mCallback != null) {
                             mCallback.onGameOver();
                         }
-                        //break;
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
                 canvas.drawColor(Color.CYAN);
                 // 円を描画する
-                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mPaint);
+                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
                 mHolder.unlockCanvasAndPost(canvas);
             }
         }
@@ -265,9 +264,9 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
     private void onCollision() {
         if (mCircleX < mDiameter || mWidth - mDiameter < mCircleX) {
             if (Math.abs(mCircleVx) <= SPEED) {
-                mVib.vibrate(Math.abs((long) mCircleVx));
+                mVibrator.vibrate(Math.abs((long) mCircleVx));
                 //ぶつかって跳ね返る
-                mCircleVx = -mCircleVx * REBOUND;
+                mCircleVx = -mCircleVx * COR;
                 mCircleAx = -mCircleAx;
                 if (mCircleX < mDiameter) mCircleX = mDiameter;
                 else mCircleX = mWidth - mDiameter;
@@ -281,8 +280,8 @@ public class GraphicsView extends SurfaceView implements SurfaceHolder.Callback,
         if (mCircleY < mDiameter || mHeight - mDiameter < mCircleY) {
             if (Math.abs(mCircleVy) <= SPEED) {
                 //ぶつかって跳ね返る
-                mVib.vibrate(Math.abs((long) mCircleVy));
-                mCircleVy = -mCircleVy * REBOUND;
+                mVibrator.vibrate(Math.abs((long) mCircleVy));
+                mCircleVy = -mCircleVy * COR;
                 mCircleAy = -mCircleAy;
                 if (mCircleY < mDiameter) mCircleY = mDiameter;
                 else mCircleY = mHeight - mDiameter;
