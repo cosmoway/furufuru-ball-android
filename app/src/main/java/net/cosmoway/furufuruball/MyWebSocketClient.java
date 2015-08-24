@@ -1,4 +1,4 @@
-package net.cosmoway.furufuru_ball_android;
+package net.cosmoway.furufuruball;
 
 import android.util.Log;
 

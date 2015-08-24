@@ -5,7 +5,7 @@ android {
     buildToolsVersion "22.0.1"
 
     defaultConfig {
-        applicationId "net.cosmoway.furufuru_ball_android"
+        applicationId "net.cosmoway.furufuruball"
         minSdkVersion 10
         targetSdkVersion 22
         versionCode 1
