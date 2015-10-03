@@ -27,58 +27,72 @@
 
             <ImageButton
                 android:id="@+id/button_help"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_gravity="start"
                 android:background="@null"
                 android:contentDescription="@null"
                 android:padding="10dp"
-                android:src="@drawable/info_mark" />
+                android:src="@drawable/info_mark"
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/text_join"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="46dp"
+                android:layout_height="46dp"
                 android:layout_gravity="end"
                 android:contentDescription="@null"
                 android:padding="10dp"
-                android:src="@drawable/join_icon" />
+                android:src="@drawable/join_icon"
+                android:scaleType="fitCenter" />
         </FrameLayout>
 
         <LinearLayout
             android:id="@+id/view_lobby"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="256dp"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
                 android:contentDescription="@null"
                 android:padding="16dp"
-                android:src="@drawable/title" />
+                android:layout_weight="2"
+                android:src="@drawable/title"
+                android:scaleType="fitCenter"
+                android:layout_gravity="center_horizontal" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="128dp"
+                android:layout_height="0dp"
                 android:contentDescription="@null"
-                android:src="@drawable/ball_top" />
+                android:layout_weight="1"
+                android:src="@drawable/ball_top"
+                android:layout_gravity="top|left|center_horizontal"
+                android:scaleType="fitCenter" />
 
             <ImageButton
                 android:id="@+id/button_start"
-                android:layout_width="256dp"
-                android:layout_height="128dp"
+                android:layout_width="204dp"
+                android:layout_height="0dp"
                 android:background="@null"
                 android:contentDescription="@null"
-                android:src="@drawable/start_mark" />
+                android:layout_weight="1"
+                android:src="@drawable/start_mark"
+                android:layout_gravity="center_horizontal"
+                android:scaleType="fitCenter" />
 
             <ImageButton
                 android:id="@+id/button_back"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:contentDescription="@null"
-                android:src="@drawable/restart"
-                android:visibility="invisible" />
+                android:scaleType="fitCenter"
+                android:visibility="invisible"
+                android:layout_gravity="center_horizontal" />
 
             <LinearLayout
                 android:id="@+id/view_result"
@@ -92,7 +106,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:contentDescription="@null"
-                    android:src="@drawable/gameover" />
+                    android:src="@drawable/gameover"
+                    android:visibility="invisible" />
 
                 <TextView
                     android:id="@+id/text_result"
