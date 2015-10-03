@@ -16,6 +16,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -46,8 +47,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
-        TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("Join：" + 0);
+        ImageView img = (ImageView) findViewById(R.id.text_join);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,13 +156,13 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void join(final int count) {
         mGraphicsView.join(count);
 
-        mHandler.post(new Runnable() {
+        /*mHandler.post(new Runnable() {
             @Override
             public void run() {
                 TextView text = (TextView) findViewById(R.id.text_join);
                 text.setText("Join：" + count);
             }
-        });
+        });*/
     }
 
     @Override
@@ -186,14 +186,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 mGraphicsView.gameOver();
                 findViewById(R.id.view_overlay).setVisibility(View.VISIBLE);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
+                ImageView gameSet = (ImageView) findViewById(R.id.game_set);
                 TextView result = (TextView) findViewById(R.id.text_result);
-                TextView gameSet = (TextView) findViewById(R.id.text_game_set);
                 if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
-                    gameSet.setText(R.string.text_game_over);
-                    result.setText("Time　----");
+                    gameSet.setVisibility(View.VISIBLE);
+                    result.setText("Time  ----");
                 } else {
-                    gameSet.setText(R.string.text_game_set);
-                    result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
+                    gameSet.setVisibility(View.VISIBLE);
+                    result.setText("Time  " + ((double) mGraphicsView.mTime / 1000));
                 }
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override

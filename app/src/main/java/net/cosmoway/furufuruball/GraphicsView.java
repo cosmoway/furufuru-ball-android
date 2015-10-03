@@ -108,10 +108,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
     public void init() {
         Canvas canvas = mHolder.lockCanvas();
-        canvas.drawColor(Color.CYAN);
+        canvas.drawColor(Color.rgb(240, 240, 235));
         mHolder.unlockCanvasAndPost(canvas);
 
-        mCirclePaint.setColor(Color.YELLOW);
+        mCirclePaint.setColor(Color.rgb(57, 57, 57));
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mJoinCount = 0;
@@ -235,7 +235,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                 // 画面の領域を超えた？
                 onCollision();
                 if (GraphicsView.isTimeUp(mTime, mJoinCount)) {
-                    mCirclePaint.setColor(Color.GRAY);
+                    mCirclePaint.setColor(Color.rgb(252, 238, 33));
                     //10秒経過したら灰色となりタイムオーバー
                     mManager.unregisterListener(this);
                     mCircleVx = 0;
@@ -253,7 +253,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
-                canvas.drawColor(Color.CYAN);
+                canvas.drawColor(Color.rgb(240, 240, 235));
                 // 円を描画する
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
                 mHolder.unlockCanvasAndPost(canvas);
