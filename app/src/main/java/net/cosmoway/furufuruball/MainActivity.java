@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
@@ -156,6 +157,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void join(final int count) {
         mGraphicsView.join(count);
 
+        String s = String.valueOf(count);
+        Log.d("main カウント",s );
+
+        ImageView iv = new ImageView(this);
+        iv.setImageResource(R.drawable.join_icon);
+        LinearLayout lay = (LinearLayout)this.findViewById(R.id.view_overlay);
+        lay.addView(iv);
+
         /*mHandler.post(new Runnable() {
             @Override
             public void run() {
@@ -172,6 +181,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             public void run() {
                 findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+                findViewById(R.id.view_footer).setVisibility(View.INVISIBLE);
             }
         });
         mGraphicsView.start();

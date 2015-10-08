@@ -12,6 +12,8 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,9 +162,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public void join(int count) {
-        mJoinCount = count;
-    }
+    public void join(int count) {mJoinCount = count;}
 
     public void start() {
         // Regist the service of sensor.

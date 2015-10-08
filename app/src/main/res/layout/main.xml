@@ -15,6 +15,25 @@
         android:background="#4000"
         android:visibility="invisible" />
 
+
+    <LinearLayout
+        android:id="@+id/view_join"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right">
+
+        <ImageView
+            android:id="@+id/text_join"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="end"
+            android:contentDescription="@null"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/join_icon" />
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,15 +55,6 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/info_mark" />
 
-            <ImageView
-                android:id="@+id/text_join"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
-                android:layout_gravity="end"
-                android:contentDescription="@null"
-                android:padding="10dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/join_icon" />
         </FrameLayout>
 
         <LinearLayout
@@ -61,12 +71,10 @@
                 android:layout_weight="5"
                 android:contentDescription="@null"
                 android:nestedScrollingEnabled="false"
-                android:paddingBottom="50dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
                 android:scaleType="fitCenter"
-                android:src="@drawable/title" />
+                android:src="@drawable/title"
+                android:layout_marginBottom="24dp"
+                android:padding="16dp" />
 
             <ImageView
                 android:layout_width="match_parent"
@@ -75,7 +83,8 @@
                 android:layout_weight="2"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/ball_top" />
+                android:src="@drawable/ball_top"
+                android:layout_marginBottom="16dp" />
 
             <ImageButton
                 android:id="@+id/button_start"
@@ -126,6 +135,7 @@
     </LinearLayout>
 
     <FrameLayout
+        android:id="@+id/view_footer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
