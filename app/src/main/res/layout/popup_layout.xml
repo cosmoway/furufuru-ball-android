@@ -2,23 +2,25 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical"
-    android:background="@drawable/corner_round">
+    android:background="@drawable/corner_round"
+    android:orientation="vertical">
+
     <ImageButton
         android:id="@+id/button_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:background="@null"
-        android:src="@mipmap/cancel"
-        android:padding="10dp"/>
+        android:padding="10dp"
+        android:src="@mipmap/cancel" />
+
     <TextView
         android:id="@+id/text_help"
-        android:background="@drawable/corner_round"
-        android:textColor="@color/material_blue_grey_950"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@drawable/corner_round"
         android:gravity="left"
-        android:padding="20dp"/>
+        android:padding="20dp"
+        android:textColor="@color/material_blue_grey_950" />
 
-   </LinearLayout>
+</LinearLayout>

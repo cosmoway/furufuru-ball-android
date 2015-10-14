@@ -48,7 +48,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
-        ImageView img = (ImageView) findViewById(R.id.text_join);
+        //ImageView img = (ImageView) findViewById(R.id.text_join);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,12 +158,26 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mGraphicsView.join(count);
 
         String s = String.valueOf(count);
-        Log.d("main カウント",s );
+        Log.d("main カウント", s);
 
-        ImageView iv = new ImageView(this);
-        iv.setImageResource(R.drawable.join_icon);
-        LinearLayout lay = (LinearLayout)this.findViewById(R.id.view_overlay);
-        lay.addView(iv);
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayout LL = (LinearLayout) findViewById(R.id.view_join);
+                LL.removeAllViews();
+                for (int i = 0; i < count; i++) {
+                    ImageView iv = new ImageView(MainActivity.this);
+                    iv.setImageResource(R.drawable.join_icon);
+                    iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    iv.setPadding(-70, 30, -70, 0);
+                    LL.addView(iv);
+                }
+
+                LL.setVisibility(View.VISIBLE);
+            }
+        });
+
+
 
         /*mHandler.post(new Runnable() {
             @Override
@@ -182,6 +196,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_footer).setVisibility(View.INVISIBLE);
+                //findViewById(R.id.view_background).setVisibility(View.VISIBLE);
             }
         });
         mGraphicsView.start();
