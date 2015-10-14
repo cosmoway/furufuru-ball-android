@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -20,6 +21,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import android.view.ViewGroup.MarginLayoutParams;
+import android.view.ViewGroup.LayoutParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -169,7 +173,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     ImageView iv = new ImageView(MainActivity.this);
                     iv.setImageResource(R.drawable.join_icon);
                     iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                    iv.setPadding(-70, 30, -70, 0);
+                    DisplayMetrics metrics = getResources().getDisplayMetrics();
+                    int padding = (int) (metrics.density * 8);
+                    iv.setLayoutParams(new LinearLayout.LayoutParams(
+                            padding * 4,
+                            padding * 4));
+                    LayoutParams lp = iv.getLayoutParams();
+                    MarginLayoutParams mlp =(MarginLayoutParams)lp;
+                    mlp.setMargins(8,8,8,8);
                     LL.addView(iv);
                 }
 
@@ -211,6 +222,11 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 mGraphicsView.gameOver();
                 findViewById(R.id.view_overlay).setVisibility(View.VISIBLE);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_back).setVisibility(View.VISIBLE);
+                findViewById(R.id.end_icon).setVisibility(View.VISIBLE);
+                findViewById(R.id.game_set).setVisibility(View.VISIBLE);
+                findViewById(R.id.text_result).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_frame).setVisibility(View.VISIBLE);
                 ImageView gameSet = (ImageView) findViewById(R.id.game_set);
                 TextView result = (TextView) findViewById(R.id.text_result);
                 if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
@@ -227,8 +243,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                         connectIfNeeded();
                         findViewById(R.id.view_overlay).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_back).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.end_icon).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.game_set).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.text_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_frame).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+                        findViewById(R.id.view_footer).setVisibility(View.VISIBLE);
                     }
                 });
                 disconnect();
