@@ -13,7 +13,7 @@
         android:id="@+id/view_overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#4000"
+        android:background="#1000"
         android:visibility="visible" />
 
     <LinearLayout

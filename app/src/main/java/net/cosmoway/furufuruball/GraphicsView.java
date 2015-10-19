@@ -262,10 +262,12 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
-                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                // 円を描画する
-                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
-                mHolder.unlockCanvasAndPost(canvas);
+                if(canvas!=null) {
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    // 円を描画する
+                    canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
+                    mHolder.unlockCanvasAndPost(canvas);
+                }
             }
         }
     }
