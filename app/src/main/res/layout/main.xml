@@ -8,31 +8,30 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+
     <View
         android:id="@+id/view_overlay"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="#4000"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
+    <LinearLayout
+        android:id="@+id/view_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/view_join"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="8dp"
         android:gravity="right"
-        android:orientation="horizontal"
-        android:layout_margin="8dp">
+        android:orientation="horizontal">
 
-        <!--<ImageView-->
-        <!--android:id="@+id/text_join"-->
-        <!--android:layout_width="38dp"-->
-        <!--android:layout_height="38dp"-->
-        <!--android:layout_gravity="end"-->
-        <!--android:contentDescription="@null"-->
-        <!--android:padding="10dp"-->
-        <!--android:scaleType="fitCenter"-->
-        <!--android:src="@drawable/join_icon" />-->
 
     </LinearLayout>
 
@@ -73,7 +72,6 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="24dp"
                 android:layout_weight="5"
-                android:contentDescription="@null"
                 android:nestedScrollingEnabled="false"
                 android:padding="16dp"
                 android:scaleType="fitCenter"
@@ -94,24 +92,16 @@
                 android:layout_width="204dp"
                 android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="64dp"
                 android:layout_weight="2"
                 android:background="@null"
                 android:contentDescription="@null"
                 android:scaleType="fitCenter"
-                android:src="@drawable/start_mark"
-                android:layout_marginBottom="64dp" />
+                android:src="@drawable/start_mark" />
 
         </LinearLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/view_background"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center_vertical"
-        android:orientation="vertical">
-
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/view_result"
@@ -124,24 +114,24 @@
             android:id="@+id/end_icon"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="128dp"
             android:layout_weight="1"
-            android:src="@drawable/mark"
             android:scaleType="fitCenter"
-            android:visibility="invisible"
-            android:layout_marginTop="128dp" />
+            android:src="@drawable/mark"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/game_set"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginBottom="-32dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="2"
             android:contentDescription="@null"
-            android:src="@drawable/gameover"
             android:scaleType="fitCenter"
-            android:visibility="invisible"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginBottom="-32dp"/>
+            android:src="@drawable/gameover"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/text_result"
@@ -149,27 +139,28 @@
             android:layout_height="0dp"
             android:layout_weight="2"
             android:gravity="center"
+            android:scaleType="fitCenter"
             android:text="@string/text_result"
             android:textColor="@color/material_blue_grey_950"
-            android:scaleType="fitCenter"
             android:textSize="32sp" />
 
         <FrameLayout
             android:id="@+id/button_frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"
             android:layout_gravity="center"
-            >
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:scaleType="fitCenter"
-            android:background="@drawable/restart"
-            android:id="@+id/button_back"/>
+            android:layout_weight="2">
+
+            <Button
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/restart"
+                android:scaleType="fitCenter" />
         </FrameLayout>
     </LinearLayout>
+
 
     <FrameLayout
         android:id="@+id/view_footer"

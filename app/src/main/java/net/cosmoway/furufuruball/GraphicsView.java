@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -87,6 +89,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
     // Constructor
     public GraphicsView(Context context, SurfaceView surfaceView) {
+
+        surfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        surfaceView.setZOrderOnTop(true);
+
         // SurfaceView描画に用いるコールバックを登録する。
         surfaceView.getHolder().addCallback(this);
         // ボール描画用の準備
@@ -106,11 +112,12 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     public void surfaceCreated(SurfaceHolder holder) {
         mHolder = holder;
         init();
+
     }
 
     public void init() {
         Canvas canvas = mHolder.lockCanvas();
-        canvas.drawColor(Color.rgb(240, 240, 235));
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         mHolder.unlockCanvasAndPost(canvas);
 
         mCirclePaint.setColor(Color.rgb(57, 57, 57));
@@ -162,7 +169,9 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
-    public void join(int count) {mJoinCount = count;}
+    public void join(int count) {
+        mJoinCount = count;
+    }
 
     public void start() {
         // Regist the service of sensor.
@@ -253,7 +262,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
-                canvas.drawColor(Color.rgb(240, 240, 235));
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                 // 円を描画する
                 canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
                 mHolder.unlockCanvasAndPost(canvas);
