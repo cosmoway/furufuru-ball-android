@@ -3,7 +3,6 @@ package net.cosmoway.furufuruball;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -170,7 +169,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             public void run() {
                 LinearLayout LL = (LinearLayout) findViewById(R.id.view_join);
                 LL.removeAllViews();
-                for (int i = 0; i < count; i++) {
+                for (int i = 0; i < count || i > 9; i++) {
                     ImageView iv = new ImageView(MainActivity.this);
                     iv.setImageResource(R.drawable.join_icon);
                     iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
@@ -234,7 +233,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             public void run() {
                 mGraphicsView.gameOver();
                 findViewById(R.id.view_background).setBackgroundResource(R.drawable.back5);
-                findViewById(R.id.view_overlay).setVisibility(View.VISIBLE);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
                 findViewById(R.id.button_back).setVisibility(View.VISIBLE);
                 findViewById(R.id.end_icon).setVisibility(View.VISIBLE);
@@ -255,7 +253,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     public void onClick(View v) {
                         mGraphicsView.init();
                         connectIfNeeded();
-                        //findViewById(R.id.view_overlay).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_back).setVisibility(View.INVISIBLE);
                         findViewById(R.id.end_icon).setVisibility(View.INVISIBLE);

@@ -22,5 +22,4 @@
         android:gravity="left"
         android:padding="20dp"
         android:textColor="@color/material_blue_grey_950" />
-
 </LinearLayout>

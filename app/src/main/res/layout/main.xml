@@ -9,13 +9,6 @@
         android:layout_height="fill_parent" />
 
 
-    <View
-        android:id="@+id/view_overlay"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="#1000"
-        android:visibility="visible" />
-
     <LinearLayout
         android:id="@+id/view_background"
         android:layout_width="match_parent"

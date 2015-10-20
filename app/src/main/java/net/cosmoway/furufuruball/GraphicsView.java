@@ -14,8 +14,6 @@ import android.os.Vibrator;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -262,7 +260,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
-                if(canvas!=null) {
+                if (canvas != null) {
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                     // 円を描画する
                     canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
