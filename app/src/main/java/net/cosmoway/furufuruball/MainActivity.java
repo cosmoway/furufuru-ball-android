@@ -271,6 +271,12 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
+    public void onPause(){
+        super.onPause();
+        System.exit(0);
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
         disconnect();
