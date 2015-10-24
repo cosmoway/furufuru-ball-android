@@ -1,12 +1,15 @@
 package net.cosmoway.furufuruball;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -38,6 +41,10 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private PopupWindow mPopupWindow;
     private MyWebSocketClient mWebSocketClient;
     private Handler mHandler = new Handler();
+    public static final int REQUEST_LOCATION = 1;
+
+    public final int OK = 1;
+    public int state = 0, permissioncheck = 0, APIlevel = Build.VERSION.SDK_INT;
 
     private static final String TAG = "Ws";
 
@@ -47,6 +54,27 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (APIlevel >= 23) {
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // 許可ダイアログの表示
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTSはアプリ内で独自定義したrequestCodeの値
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_LOCATION);
+            } else {
+                permissioncheck = OK;
+            }
+        } else {
+            Log.i(TAG, "6じゃない");
+            permissioncheck = OK;
+        }
+
+        if (permissioncheck == OK) {
+            create();
+        }
+
+    }
+
+    public void create(){
         connectIfNeeded();
         setContentView(R.layout.main);
         //背景になるSurfaceView
@@ -153,6 +181,18 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            // 先ほどの独自定義したrequestCodeの結果確認
+            case REQUEST_LOCATION: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    create();
+                }
+            }
+        }
+    }
+
+    @Override
     public void moveIn() {
         mGraphicsView.moveIn();
     }
@@ -204,6 +244,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                state = OK;
                 Random rnd = new Random();
                 int r = rnd.nextInt(3);
                 if (r == 1) {
@@ -271,9 +312,11 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
-        System.exit(0);
+        if (state == OK) {
+            System.exit(0);
+        }
     }
 
     @Override
