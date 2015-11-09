@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -16,13 +17,19 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+
+import android.view.ViewGroup.MarginLayoutParams;
+import android.view.ViewGroup.LayoutParams;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Random;
 
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
         GraphicsView.Callback {
@@ -46,8 +53,6 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
-        TextView text = (TextView) findViewById(R.id.text_join);
-        text.setText("Join：" + 0);
         findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -156,13 +161,42 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void join(final int count) {
         mGraphicsView.join(count);
 
+        String s = String.valueOf(count);
+        Log.d("main カウント", s);
+
         mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                LinearLayout LL = (LinearLayout) findViewById(R.id.view_join);
+                LL.removeAllViews();
+                for (int i = 0; i < count || i > 9; i++) {
+                    ImageView iv = new ImageView(MainActivity.this);
+                    iv.setImageResource(R.drawable.join_icon);
+                    iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                    DisplayMetrics metrics = getResources().getDisplayMetrics();
+                    int padding = (int) (metrics.density * 8);
+                    iv.setLayoutParams(new LinearLayout.LayoutParams(
+                            padding * 3,
+                            padding * 3));
+                    LayoutParams lp = iv.getLayoutParams();
+                    MarginLayoutParams mlp = (MarginLayoutParams) lp;
+                    mlp.setMargins(padding / 2, padding / 2, padding / 2, padding / 2);
+                    LL.addView(iv);
+                }
+
+                LL.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+
+        /*mHandler.post(new Runnable() {
             @Override
             public void run() {
                 TextView text = (TextView) findViewById(R.id.text_join);
                 text.setText("Join：" + count);
             }
-        });
+        });*/
     }
 
     @Override
@@ -170,8 +204,22 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mHandler.post(new Runnable() {
             @Override
             public void run() {
+                Random rnd = new Random();
+                int r = rnd.nextInt(3);
+                if (r == 1) {
+                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back1);
+                } else if (r == 2) {
+                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back2);
+                } else {
+                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back3);
+                    //findViewById(R.id.view_background).setBackground
+                }
+                findViewById(R.id.view_background).setVisibility(View.VISIBLE);
                 findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
                 findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
+                findViewById(R.id.view_footer).setVisibility(View.INVISIBLE);
+                //findViewById(R.id.view_background).setVisibility(View.VISIBLE);
+                //findViewById(R.id.back1).setVisibility(View.VISIBLE);
             }
         });
         mGraphicsView.start();
@@ -184,26 +232,37 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             @Override
             public void run() {
                 mGraphicsView.gameOver();
-                findViewById(R.id.view_overlay).setVisibility(View.VISIBLE);
+                findViewById(R.id.view_background).setBackgroundResource(R.drawable.back5);
                 findViewById(R.id.view_result).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_back).setVisibility(View.VISIBLE);
+                findViewById(R.id.end_icon).setVisibility(View.VISIBLE);
+                findViewById(R.id.game_set).setVisibility(View.VISIBLE);
+                findViewById(R.id.text_result).setVisibility(View.VISIBLE);
+                findViewById(R.id.button_frame).setVisibility(View.VISIBLE);
+                ImageView gameSet = (ImageView) findViewById(R.id.game_set);
                 TextView result = (TextView) findViewById(R.id.text_result);
-                TextView gameSet = (TextView) findViewById(R.id.text_game_set);
                 if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
-                    gameSet.setText(R.string.text_game_over);
-                    result.setText("Time　----");
+                    gameSet.setVisibility(View.VISIBLE);
+                    result.setText("Time  ----");
                 } else {
-                    gameSet.setText(R.string.text_game_set);
-                    result.setText("Time　" + ((double) mGraphicsView.mTime / 1000));
+                    gameSet.setVisibility(View.VISIBLE);
+                    result.setText("Time  " + ((double) mGraphicsView.mTime / 1000));
                 }
                 findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         mGraphicsView.init();
                         connectIfNeeded();
-                        findViewById(R.id.view_overlay).setVisibility(View.INVISIBLE);
                         findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_back).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.end_icon).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.game_set).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.text_result).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.button_frame).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.view_background).setVisibility(View.INVISIBLE);
                         findViewById(R.id.button_help).setVisibility(View.VISIBLE);
                         findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
+                        findViewById(R.id.view_footer).setVisibility(View.VISIBLE);
                     }
                 });
                 disconnect();

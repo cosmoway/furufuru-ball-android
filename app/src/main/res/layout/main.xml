@@ -8,87 +8,164 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <View
-        android:id="@+id/view_overlay"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:visibility="invisible"
-        android:background="#4000" />
-
-    <ImageButton
-        android:id="@+id/button_help"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="@null"
-        android:background="@null"
-        android:src="@mipmap/help"
-        android:padding="10dp"/>
 
     <LinearLayout
-        android:id="@+id/view_lobby"
-        android:layout_width="wrap_content"
+        android:id="@+id/view_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/view_join"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_margin="8dp"
+        android:gravity="right"
+        android:orientation="horizontal">
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/text_title"
-            android:textColor="@color/material_blue_grey_950"
-            android:textSize="48sp" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_start"
-            android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/button_help"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="start"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/info_mark" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/view_lobby"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/text_start"
-            android:textColor="@color/material_blue_grey_950"
-            android:textSize="28sp" />
+            android:layout_weight="1"
+            android:longClickable="false"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="24dp"
+                android:layout_weight="5"
+                android:nestedScrollingEnabled="false"
+                android:padding="16dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/title" />
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="top|left|center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:layout_weight="2"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ball_top" />
+
+            <ImageButton
+                android:id="@+id/button_start"
+                android:layout_width="204dp"
+                android:layout_height="0dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="64dp"
+                android:layout_weight="2"
+                android:background="@null"
+                android:contentDescription="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/start_mark" />
+
+        </LinearLayout>
     </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/view_result"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         android:visibility="invisible">
 
-        <TextView
-            android:id="@+id/text_game_set"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/text_game_set"
-            android:textColor="@color/material_blue_grey_950"
-            android:textSize="48sp"
-            />
+        <ImageView
+            android:id="@+id/end_icon"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="128dp"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@drawable/mark"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/game_set"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="-32dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_weight="2"
+            android:contentDescription="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/gameover"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/text_result"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:scaleType="fitCenter"
             android:text="@string/text_result"
             android:textColor="@color/material_blue_grey_950"
-            android:textSize="32sp"
-            android:layout_gravity="center"/>
+            android:textSize="32sp" />
 
-        <Button
-            android:id="@+id/button_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/text_back"
-            android:textColor="@color/material_blue_grey_950"
-            android:textSize="28sp" />
+        <FrameLayout
+            android:id="@+id/button_frame"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="2">
+
+            <Button
+                android:id="@+id/button_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/restart"
+                android:scaleType="fitCenter" />
+        </FrameLayout>
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/text_join"
-        android:layout_width="wrap_content"
+
+    <FrameLayout
+        android:id="@+id/view_footer"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:text="@string/text_join"
-        android:textColor="@color/material_blue_grey_950" />
+        android:layout_gravity="bottom"
+        android:background="#0c446a">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:contentDescription="@null"
+            android:src="@drawable/underbar"></ImageView>
+    </FrameLayout>
 </FrameLayout>

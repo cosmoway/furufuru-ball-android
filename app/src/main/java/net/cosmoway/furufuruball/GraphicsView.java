@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
+import android.graphics.PorterDuff;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -85,6 +87,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
     // Constructor
     public GraphicsView(Context context, SurfaceView surfaceView) {
+
+        surfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
+        surfaceView.setZOrderOnTop(true);
+
         // SurfaceView描画に用いるコールバックを登録する。
         surfaceView.getHolder().addCallback(this);
         // ボール描画用の準備
@@ -104,14 +110,15 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     public void surfaceCreated(SurfaceHolder holder) {
         mHolder = holder;
         init();
+
     }
 
     public void init() {
         Canvas canvas = mHolder.lockCanvas();
-        canvas.drawColor(Color.CYAN);
+        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
         mHolder.unlockCanvasAndPost(canvas);
 
-        mCirclePaint.setColor(Color.YELLOW);
+        mCirclePaint.setColor(Color.rgb(57, 57, 57));
         mAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mLinearAcceleration = new float[]{0.0f, 0.0f, 0.0f};
         mJoinCount = 0;
@@ -235,7 +242,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                 // 画面の領域を超えた？
                 onCollision();
                 if (GraphicsView.isTimeUp(mTime, mJoinCount)) {
-                    mCirclePaint.setColor(Color.GRAY);
+                    mCirclePaint.setColor(Color.rgb(252, 238, 33));
                     //10秒経過したら灰色となりタイムオーバー
                     mManager.unregisterListener(this);
                     mCircleVx = 0;
@@ -253,10 +260,12 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                     }
                 }
                 Canvas canvas = mHolder.lockCanvas();
-                canvas.drawColor(Color.CYAN);
-                // 円を描画する
-                canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
-                mHolder.unlockCanvasAndPost(canvas);
+                if (canvas != null) {
+                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                    // 円を描画する
+                    canvas.drawCircle(mCircleX, mCircleY, mDiameter, mCirclePaint);
+                    mHolder.unlockCanvasAndPost(canvas);
+                }
             }
         }
     }
