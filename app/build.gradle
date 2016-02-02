@@ -1,15 +1,34 @@
 apply plugin: 'com.android.application'
 
+def Integer computeVersionCode() {
+    def newVersionCode = System.getenv("BUILD_NUMBER") as Integer ?: 0;
+
+    println "version code=${newVersionCode}";
+
+    return newVersionCode;
+}
+
+def String computeVersionName() {
+    final BASE_VERSION_NAME = "0.9";
+
+    def versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 0;
+    def newVersionName = BASE_VERSION_NAME + "." + versionCode;
+
+    println "version name=${newVersionName}";
+
+    return newVersionName;
+}
+
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "net.cosmoway.furufuruball"
         minSdkVersion 10
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
+        versionCode computeVersionCode()
+        versionName computeVersionName()
     }
     buildTypes {
         release {
@@ -21,7 +40,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'com.android.support:appcompat-v7:23.1.1'
+    compile 'com.google.android.gms:play-services:8.4.0'
     compile 'org.java-websocket:Java-WebSocket:1.3.0'
 }

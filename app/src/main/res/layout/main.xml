@@ -54,7 +54,7 @@
         <LinearLayout
             android:id="@+id/view_lobby"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:longClickable="false"
             android:orientation="vertical">
@@ -166,6 +166,6 @@
             android:layout_width="match_parent"
             android:layout_height="24dp"
             android:contentDescription="@null"
-            android:src="@drawable/underbar"></ImageView>
+            android:src="@drawable/underbar" />
     </FrameLayout>
 </FrameLayout>
