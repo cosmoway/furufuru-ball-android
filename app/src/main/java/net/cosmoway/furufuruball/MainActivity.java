@@ -1,18 +1,10 @@
 package net.cosmoway.furufuruball;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.ActivityCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -22,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,18 +29,27 @@ import java.io.InputStreamReader;
 import java.util.Random;
 
 public class MainActivity extends Activity implements MyWebSocketClient.MyCallbacks,
-        GraphicsView.Callback {
+        GraphicsView.Callback, View.OnClickListener/*, LocationListener*/ {
 
     private GraphicsView mGraphicsView;
     private PopupWindow mPopupWindow;
     private MyWebSocketClient mWebSocketClient;
     private Handler mHandler = new Handler();
+    private ImageButton mStartButton;
+    private ImageButton mHelpButton;
+    private ImageButton mCloseButton;
 
     private static final String TAG = "Ws";
+    private LinearLayout mBackGround;
+    private LinearLayout mLobby;
+    private FrameLayout mFooter;
+    private LinearLayout mResultView;
+    private Button mBackButton;
+    private ImageView mEndIcon;
+    private ImageView mGameSet;
+    private TextView mResult;
+    private FrameLayout mFrame;
 
-    /**
-     * @param savedInstanceState
-     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,71 +59,10 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
-        findViewById(R.id.button_start).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mGraphicsView.onStart();
-            }
-        });
-        findViewById(R.id.button_help).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPopupWindow = new PopupWindow(MainActivity.this);
-
-                //レイアウト設定
-                View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
-                ImageButton btn = (ImageButton) popupView.findViewById(R.id.button_close);
-                btn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
-                        if (mPopupWindow.isShowing()) {
-                            mPopupWindow.dismiss();
-                        }
-
-                    }
-                });
-                InputStream is = null;
-                BufferedReader br = null;
-                String text = "";
-                try {
-                    try {
-                        // assetsフォルダ内の sample.txt をオープンする
-                        is = getAssets().open("help.txt");
-                        br = new BufferedReader(new InputStreamReader(is));
-
-                        // １行ずつ読み込み、改行を付加する
-                        String str;
-                        while ((str = br.readLine()) != null) {
-                            text += str + "\n";
-                        }
-                    } finally {
-                        if (is != null) is.close();
-                        if (br != null) br.close();
-                    }
-                } catch (IOException e) {
-                    Log.i(TAG, "error");
-                }
-
-                TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
-                helpText.setText(text);
-                mPopupWindow.setContentView(popupView);
-                //背景に透明な画像を設定
-                mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                // タップ時に他のViewでキャッチされないための設定
-                mPopupWindow.setOutsideTouchable(true);
-                mPopupWindow.setFocusable(true);
-                // 表示サイズの設定
-                float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
-
-                mPopupWindow.setWindowLayoutMode((int) width, WindowManager.LayoutParams.WRAP_CONTENT);
-                mPopupWindow.setWidth((int) width);
-                mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
-                mPopupWindow.showAtLocation(v, Gravity.CENTER, 0, 0);
-            }
-        });
+        findViews();
+        setClickListener();
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        /*LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
         criteria.setAccuracy(Criteria.ACCURACY_FINE);
         criteria.setBearingRequired(false);  // 方位不要
@@ -137,32 +79,27 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
-            locationManager.requestSingleUpdate(criteria, new LocationListener() {
+            locationManager.requestSingleUpdate(criteria, this, null);
+        }*/
+    }
 
-                @Override
-                public void onLocationChanged(Location location) {
-                    String str = "";
-                    str = str + "Latitude:" + String.valueOf(location.getLatitude()) + "\n";
-                    str = str + "Longitude:" + String.valueOf(location.getLongitude());
-                    Log.d("Location", str);
-                }
+    private void findViews() {
+        mStartButton = (ImageButton) findViewById(R.id.button_start);
+        mHelpButton = (ImageButton) findViewById(R.id.button_help);
+        mBackGround = (LinearLayout) findViewById(R.id.view_background);
+        mLobby = (LinearLayout) findViewById(R.id.view_lobby);
+        mFooter = (FrameLayout) findViewById(R.id.view_footer);
+        mResultView = (LinearLayout) findViewById(R.id.view_result);
+        mBackButton = (Button) findViewById(R.id.button_back);
+        mEndIcon = (ImageView) findViewById(R.id.end_icon);
+        mGameSet = (ImageView) findViewById(R.id.game_set);
+        mResult = (TextView) findViewById(R.id.text_result);
+        mFrame = (FrameLayout) findViewById(R.id.button_frame);
+    }
 
-                @Override
-                public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                }
-
-                @Override
-                public void onProviderEnabled(String provider) {
-
-                }
-
-                @Override
-                public void onProviderDisabled(String provider) {
-
-                }
-            }, null);
-        }
+    private void setClickListener() {
+        mStartButton.setOnClickListener(this);
+        mHelpButton.setOnClickListener(this);
     }
 
     @Override
@@ -188,28 +125,15 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     iv.setScaleType(ImageView.ScaleType.FIT_CENTER);
                     DisplayMetrics metrics = getResources().getDisplayMetrics();
                     int padding = (int) (metrics.density * 8);
-                    iv.setLayoutParams(new LinearLayout.LayoutParams(
-                            padding * 3,
-                            padding * 3));
+                    iv.setLayoutParams(new LinearLayout.LayoutParams(padding * 3, padding * 3));
                     LayoutParams lp = iv.getLayoutParams();
                     MarginLayoutParams mlp = (MarginLayoutParams) lp;
                     mlp.setMargins(padding / 2, padding / 2, padding / 2, padding / 2);
                     LL.addView(iv);
                 }
-
                 LL.setVisibility(View.VISIBLE);
             }
         });
-
-
-
-        /*mHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                TextView text = (TextView) findViewById(R.id.text_join);
-                text.setText("Join：" + count);
-            }
-        });*/
     }
 
     @Override
@@ -220,19 +144,16 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                 Random rnd = new Random();
                 int r = rnd.nextInt(3);
                 if (r == 1) {
-                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back1);
+                    mBackGround.setBackgroundResource(R.drawable.back1);
                 } else if (r == 2) {
-                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back2);
+                    mBackGround.setBackgroundResource(R.drawable.back2);
                 } else {
-                    findViewById(R.id.view_background).setBackgroundResource(R.drawable.back3);
-                    //findViewById(R.id.view_background).setBackground
+                    mBackGround.setBackgroundResource(R.drawable.back3);
                 }
-                findViewById(R.id.view_background).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_help).setVisibility(View.INVISIBLE);
-                findViewById(R.id.view_lobby).setVisibility(View.INVISIBLE);
-                findViewById(R.id.view_footer).setVisibility(View.INVISIBLE);
-                //findViewById(R.id.view_background).setVisibility(View.VISIBLE);
-                //findViewById(R.id.back1).setVisibility(View.VISIBLE);
+                mBackGround.setVisibility(View.VISIBLE);
+                mHelpButton.setVisibility(View.INVISIBLE);
+                mLobby.setVisibility(View.INVISIBLE);
+                mFooter.setVisibility(View.INVISIBLE);
             }
         });
         mGraphicsView.start();
@@ -245,39 +166,21 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             @Override
             public void run() {
                 mGraphicsView.gameOver();
-                findViewById(R.id.view_background).setBackgroundResource(R.drawable.back5);
-                findViewById(R.id.view_result).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_back).setVisibility(View.VISIBLE);
-                findViewById(R.id.end_icon).setVisibility(View.VISIBLE);
-                findViewById(R.id.game_set).setVisibility(View.VISIBLE);
-                findViewById(R.id.text_result).setVisibility(View.VISIBLE);
-                findViewById(R.id.button_frame).setVisibility(View.VISIBLE);
-                ImageView gameSet = (ImageView) findViewById(R.id.game_set);
-                TextView result = (TextView) findViewById(R.id.text_result);
+                mBackGround.setBackgroundResource(R.drawable.back5);
+                mResultView.setVisibility(View.VISIBLE);
+                mBackButton.setVisibility(View.VISIBLE);
+                mEndIcon.setVisibility(View.VISIBLE);
+                mGameSet.setVisibility(View.VISIBLE);
+                mResult.setVisibility(View.VISIBLE);
+                mFrame.setVisibility(View.VISIBLE);
                 if (GraphicsView.isTimeUp(mGraphicsView.mTime, mGraphicsView.mJoinCount)) {
-                    gameSet.setVisibility(View.VISIBLE);
-                    result.setText("Time  ----");
+                    mGameSet.setVisibility(View.VISIBLE);
+                    mResult.setText("Time  ----");
                 } else {
-                    gameSet.setVisibility(View.VISIBLE);
-                    result.setText(String.format("Time  %s", (double) mGraphicsView.mTime / 1000));
+                    mGameSet.setVisibility(View.VISIBLE);
+                    mResult.setText(String.format("Time  %s", (double) mGraphicsView.mTime / 1000));
                 }
-                findViewById(R.id.button_back).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mGraphicsView.init();
-                        connectIfNeeded();
-                        findViewById(R.id.view_result).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.button_back).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.end_icon).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.game_set).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.text_result).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.button_frame).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.view_background).setVisibility(View.INVISIBLE);
-                        findViewById(R.id.button_help).setVisibility(View.VISIBLE);
-                        findViewById(R.id.view_lobby).setVisibility(View.VISIBLE);
-                        findViewById(R.id.view_footer).setVisibility(View.VISIBLE);
-                    }
-                });
+                mBackButton.setOnClickListener(MainActivity.this);
                 disconnect();
             }
         });
@@ -329,4 +232,98 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
             mWebSocketClient = null;
         }
     }
+
+    @Override
+    public void onClick(View v) {
+        if (v == mStartButton) {
+            mGraphicsView.onStart();
+        } else if (v == mHelpButton) {
+            showHelp(v);
+
+        } else if (v == mCloseButton) {
+            if (mPopupWindow.isShowing()) {
+                mPopupWindow.dismiss();
+            }
+        } else if (v == mBackButton) {
+            mGraphicsView.init();
+            connectIfNeeded();
+            mResultView.setVisibility(View.INVISIBLE);
+            mBackButton.setVisibility(View.INVISIBLE);
+            mEndIcon.setVisibility(View.INVISIBLE);
+            mGameSet.setVisibility(View.INVISIBLE);
+            mResult.setVisibility(View.INVISIBLE);
+            mFrame.setVisibility(View.INVISIBLE);
+            mBackGround.setVisibility(View.INVISIBLE);
+            mHelpButton.setVisibility(View.VISIBLE);
+            mLobby.setVisibility(View.VISIBLE);
+            mFooter.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void showHelp(View view) {
+        mPopupWindow = new PopupWindow(MainActivity.this);
+
+        //レイアウト設定
+        View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
+        mCloseButton = (ImageButton) popupView.findViewById(R.id.button_close);
+        mCloseButton.setOnClickListener(this);
+        InputStream is = null;
+        BufferedReader br = null;
+        String text = "";
+        try {
+            try {
+                // assetsフォルダ内の sample.txt をオープンする
+                is = getAssets().open("help.txt");
+                br = new BufferedReader(new InputStreamReader(is));
+
+                // １行ずつ読み込み、改行を付加する
+                String str;
+                while ((str = br.readLine()) != null) {
+                    text += str + "\n";
+                }
+            } finally {
+                if (is != null) is.close();
+                if (br != null) br.close();
+            }
+        } catch (IOException e) {
+            Log.i(TAG, "error");
+        }
+
+        TextView helpText = (TextView) popupView.findViewById(R.id.text_help);
+        helpText.setText(text);
+        mPopupWindow.setContentView(popupView);
+        //背景に透明な画像を設定
+        mPopupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        // タップ時に他のViewでキャッチされないための設定
+        mPopupWindow.setOutsideTouchable(true);
+        mPopupWindow.setFocusable(true);
+        // 表示サイズの設定
+        float width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 300, getResources().getDisplayMetrics());
+        mPopupWindow.setWidth((int) width);
+        mPopupWindow.setHeight(WindowManager.LayoutParams.WRAP_CONTENT);
+        mPopupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+    }
+
+    /*@Override
+    public void onLocationChanged(Location location) {
+        String str = "";
+        str = str + "Latitude:" + String.valueOf(location.getLatitude()) + "\n";
+        str = str + "Longitude:" + String.valueOf(location.getLongitude());
+        Log.d("Location", str);
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }*/
 }
