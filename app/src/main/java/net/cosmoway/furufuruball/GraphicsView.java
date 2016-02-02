@@ -110,7 +110,6 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     public void surfaceCreated(SurfaceHolder holder) {
         mHolder = holder;
         init();
-
     }
 
     public void init() {
@@ -241,24 +240,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
                 // 画面の領域を超えた？
                 onCollision();
-                if (GraphicsView.isTimeUp(mTime, mJoinCount)) {
-                    mCirclePaint.setColor(Color.rgb(252, 238, 33));
-                    //10秒経過したら灰色となりタイムオーバー
-                    mManager.unregisterListener(this);
-                    mCircleVx = 0;
-                    mCircleAx = 0;
-                    mCircleAy = 0.98f;
-                    //重力に任せて下に落ちる
-                    if (mCircleY == mHeight - mDiameter) {
-                        isMoveIn = false;
-                        mCircleVy = 0;
-                        mCircleAy = 0;
-                        mCircleY = mHeight - mDiameter;
-                        if (mCallback != null) {
-                            mCallback.onGameOver();
-                        }
-                    }
-                }
+                onTimeUp();
                 Canvas canvas = mHolder.lockCanvas();
                 if (canvas != null) {
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -301,6 +283,28 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
                 }
             }
         }
+    }
+
+    private void onTimeUp() {
+        if (GraphicsView.isTimeUp(mTime, mJoinCount)) {
+            mCirclePaint.setColor(Color.rgb(128, 128, 128));
+            //10秒経過したら灰色となりタイムオーバー
+            mManager.unregisterListener(this);
+            mCircleVx = 0;
+            mCircleAx = 0;
+            mCircleAy = 0.98f;
+            //重力に任せて下に落ちる
+            if (mCircleY == mHeight - mDiameter) {
+                isMoveIn = false;
+                mCircleVy = 0;
+                mCircleAy = 0;
+                mCircleY = mHeight - mDiameter;
+                if (mCallback != null) {
+                    mCallback.onGameOver();
+                }
+            }
+        }
+
     }
 
     private void moveOut() {
