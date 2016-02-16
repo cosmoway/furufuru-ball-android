@@ -9,7 +9,7 @@ def Integer computeVersionCode() {
 }
 
 def String computeVersionName() {
-    final BASE_VERSION_NAME = "0.9";
+    final BASE_VERSION_NAME = "1.0";
 
     def versionCode = System.getenv("BUILD_NUMBER") as Integer ?: 0;
     def newVersionName = BASE_VERSION_NAME + "." + versionCode;
