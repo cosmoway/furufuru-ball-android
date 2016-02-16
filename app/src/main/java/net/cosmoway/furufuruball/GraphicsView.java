@@ -219,6 +219,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
         Log.d("GV", "GameOver");
     }
 
+    public void stopRunning() {
+        isRunning = false;
+    }
+
     @Override
     public void run() {
         // Runnableインターフェースをimplementsしているので、runメソッドを実装する

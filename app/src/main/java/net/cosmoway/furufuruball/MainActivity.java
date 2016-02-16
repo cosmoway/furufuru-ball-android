@@ -112,7 +112,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mGraphicsView.join(count);
 
         String s = String.valueOf(count);
-        Log.d("main カウント", s);
+        //Log.d("main カウント", s);
 
         mHandler.post(new Runnable() {
             @Override
@@ -190,9 +190,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void onDestroy() {
         super.onDestroy();
         disconnect();
+        if (mGraphicsView != null) {
+            mGraphicsView.stopRunning();
+            mGraphicsView = null;
+        }
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
+        Log.d("activity", "Destroy");
         getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
 
@@ -267,14 +272,14 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         View popupView = getLayoutInflater().inflate(R.layout.popup_layout, null);
         mCloseButton = (ImageButton) popupView.findViewById(R.id.button_close);
         mCloseButton.setOnClickListener(this);
-        InputStream is = null;
+        InputStream stream = null;
         BufferedReader br = null;
         String text = "";
         try {
             try {
                 // assetsフォルダ内の sample.txt をオープンする
-                is = getAssets().open("help.txt");
-                br = new BufferedReader(new InputStreamReader(is));
+                stream = getAssets().open("help.txt");
+                br = new BufferedReader(new InputStreamReader(stream));
 
                 // １行ずつ読み込み、改行を付加する
                 String str;
@@ -282,7 +287,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
                     text += str + "\n";
                 }
             } finally {
-                if (is != null) is.close();
+                if (stream != null) stream.close();
                 if (br != null) br.close();
             }
         } catch (IOException e) {
