@@ -7,5 +7,5 @@
     <string name="text_game_over">GAME OVER</string>
     <string name="text_back">next</string>
     <string name="text_result">あなたのきろくは1.234びょうです。</string>
-    <!--<string name="text_title2">the Furu-Furu-Ball</string>-->
+    <string name="banner_ad_unit_id">ca-app-pub-3940256099942544/6300978111</string>
 </resources>
