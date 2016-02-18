@@ -187,13 +187,21 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        Log.d("activity", "Stop");
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        disconnect();
         if (mGraphicsView != null) {
             mGraphicsView.stopRunning();
             mGraphicsView = null;
         }
+        sendJson("{\"move\":\"out\"}");
+        disconnect();
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
