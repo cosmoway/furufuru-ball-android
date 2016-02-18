@@ -22,6 +22,9 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,18 +52,22 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private ImageView mGameSet;
     private TextView mResult;
     private FrameLayout mFrame;
+    private AdView mAdView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         connectIfNeeded();
         setContentView(R.layout.main);
+
         //背景になるSurfaceView
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.mySurfaceView);
         mGraphicsView = new GraphicsView(this, surfaceView);
         mGraphicsView.setCallback(this);
         findViews();
         setClickListener();
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         /*LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         Criteria criteria = new Criteria();
@@ -95,6 +102,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mGameSet = (ImageView) findViewById(R.id.game_set);
         mResult = (TextView) findViewById(R.id.text_result);
         mFrame = (FrameLayout) findViewById(R.id.button_frame);
+        mAdView = (AdView) findViewById(R.id.adView);
     }
 
     private void setClickListener() {
