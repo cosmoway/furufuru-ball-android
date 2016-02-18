@@ -156,10 +156,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
         mCircleAx = -(mAcceleration[0] / 10 + mLinearAcceleration[0] / 2);
         mCircleAy = mAcceleration[1] / 10 + mLinearAcceleration[1] / 2;
-        String str = "Acceleration:"
+        /*String str = "Acceleration:"
                 + "\nX:" + mCircleAx
                 + "\nY:" + mCircleAy;
-        Log.d("Acceleration", str);
+        Log.d("Acceleration", str);*/
     }
 
     @Override

@@ -111,7 +111,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     public void join(final int count) {
         mGraphicsView.join(count);
 
-        String s = String.valueOf(count);
+        //String s = String.valueOf(count);
         //Log.d("main カウント", s);
 
         mHandler.post(new Runnable() {
