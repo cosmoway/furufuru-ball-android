@@ -45,7 +45,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
     private static final String TAG = "Ws";
     private LinearLayout mBackGround;
     private LinearLayout mLobby;
-    private FrameLayout mFooter;
+    private ImageView mFooter;
     private LinearLayout mResultView;
     private Button mBackButton;
     private ImageView mEndIcon;
@@ -95,7 +95,7 @@ public class MainActivity extends Activity implements MyWebSocketClient.MyCallba
         mHelpButton = (ImageButton) findViewById(R.id.button_help);
         mBackGround = (LinearLayout) findViewById(R.id.view_background);
         mLobby = (LinearLayout) findViewById(R.id.view_lobby);
-        mFooter = (FrameLayout) findViewById(R.id.view_footer);
+        mFooter = (ImageView) findViewById(R.id.view_footer);
         mResultView = (LinearLayout) findViewById(R.id.view_result);
         mBackButton = (Button) findViewById(R.id.button_back);
         mEndIcon = (ImageView) findViewById(R.id.end_icon);
