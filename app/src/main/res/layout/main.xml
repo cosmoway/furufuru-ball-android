@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <SurfaceView
         android:id="@+id/mySurfaceView"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 
 
     <LinearLayout
@@ -82,7 +83,7 @@
 
             <ImageButton
                 android:id="@+id/button_start"
-                android:layout_width="204dp"
+                android:layout_width="120dp"
                 android:layout_height="0dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="64dp"
@@ -141,31 +142,40 @@
             android:id="@+id/button_frame"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_gravity="center"
+            android:layout_gravity="center_horizontal"
             android:layout_weight="2">
 
             <Button
                 android:id="@+id/button_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:layout_gravity="center_horizontal"
                 android:background="@drawable/restart"
                 android:scaleType="fitCenter" />
         </FrameLayout>
     </LinearLayout>
 
 
-    <FrameLayout
-        android:id="@+id/view_footer"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#0c446a">
+        android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/view_footer"
             android:layout_width="match_parent"
             android:layout_height="24dp"
+            android:background="#0c446a"
             android:contentDescription="@null"
             android:src="@drawable/underbar" />
-    </FrameLayout>
+
+        <com.google.android.gms.ads.AdView
+            android:id="@+id/adView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#000"
+            ads:adSize="BANNER"
+            ads:adUnitId="@string/banner_ad_unit_id" />
+    </LinearLayout>
 </FrameLayout>

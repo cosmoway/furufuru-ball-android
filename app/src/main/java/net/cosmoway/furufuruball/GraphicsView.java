@@ -26,6 +26,8 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
         void onMoveOut();
 
         void onGameOver();
+
+        int adViewHeight();
     }
 
     /**
@@ -103,7 +105,7 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         mWidth = width;
-        mHeight = height;
+        mHeight = height - mCallback.adViewHeight();
     }
 
     @Override
@@ -156,10 +158,10 @@ public class GraphicsView implements SurfaceHolder.Callback, SensorEventListener
 
         mCircleAx = -(mAcceleration[0] / 10 + mLinearAcceleration[0] / 2);
         mCircleAy = mAcceleration[1] / 10 + mLinearAcceleration[1] / 2;
-        String str = "Acceleration:"
+        /*String str = "Acceleration:"
                 + "\nX:" + mCircleAx
                 + "\nY:" + mCircleAy;
-        Log.d("Acceleration", str);
+        Log.d("Acceleration", str);*/
     }
 
     @Override
